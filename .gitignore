@@ -1,5 +1,6 @@
-.idea
+.idea/
+vendor/
 .vscode
-vendor
 Thumbs.db
 .DS_Store
+*.cache
