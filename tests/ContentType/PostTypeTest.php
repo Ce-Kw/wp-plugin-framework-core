@@ -7,6 +7,8 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 /**
  * @covers \CEKW\WpPluginFramework\Core\ContentType\PostType
+ * @covers \CEKW\WpPluginFramework\Core\ContentType\LabelInfo
+ * @covers \CEKW\WpPluginFramework\Core\AbstractExtenderBridge
  */
 class PostTypeTest extends MockeryTestCase
 {
@@ -28,6 +30,13 @@ class PostTypeTest extends MockeryTestCase
     {
         $testValue = '';
         $this->assertSame($testValue, $this->postType->getKey());
+    }
+
+    public function testGetArgs(): void
+    {
+        $this->assertArrayHasKey('public',$this->postType->getArgs());
+        $this->assertArrayHasKey('supports',$this->postType->getArgs());
+        $this->assertArrayHasKey('labels',$this->postType->getArgs());
     }
 
 }

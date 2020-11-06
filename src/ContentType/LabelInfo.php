@@ -24,7 +24,6 @@ class LabelInfo
     {
         return $this->labelName;
     }
-
     public function setLabelName(string $labelName): LabelInfo
     {
         $this->labelName = $labelName;
@@ -36,7 +35,6 @@ class LabelInfo
     {
         return $this->labelSingularName;
     }
-
     public function setLabelSingularName(string $labelSingularName): LabelInfo
     {
         $this->labelSingularName = $labelSingularName;
@@ -48,7 +46,6 @@ class LabelInfo
     {
         return $this->labelMenuName;
     }
-
     public function setLabelMenuName(string $labelMenuName): LabelInfo
     {
         $this->labelMenuName = $labelMenuName;
@@ -59,7 +56,6 @@ class LabelInfo
     {
         return $this->labelParentItemColon;
     }
-
     public function setLabelParentItemColon(string $labelParentItemColon): LabelInfo
     {
         $this->labelParentItemColon = $labelParentItemColon;
@@ -70,7 +66,6 @@ class LabelInfo
     {
         return $this->labelAllItems;
     }
-
     public function setLabelAllItems(string $labelAllItems): LabelInfo
     {
         $this->labelAllItems = $labelAllItems;
@@ -81,7 +76,6 @@ class LabelInfo
     {
         return $this->labelViewItem;
     }
-
     public function setLabelViewItem(string $labelViewItem): LabelInfo
     {
         $this->labelViewItem = $labelViewItem;
@@ -92,7 +86,6 @@ class LabelInfo
     {
         return $this->labelAddNewItem;
     }
-
     public function setLabelAddNewItem(string $labelAddNewItem): LabelInfo
     {
         $this->labelAddNewItem = $labelAddNewItem;
@@ -103,7 +96,6 @@ class LabelInfo
     {
         return $this->labelAddNew;
     }
-
     public function setLabelAddNew(string $labelAddNew): LabelInfo
     {
         $this->labelAddNew = $labelAddNew;
@@ -114,7 +106,6 @@ class LabelInfo
     {
         return $this->labelEditItem;
     }
-
     public function setLabelEditItem(string $labelEditItem): LabelInfo
     {
         $this->labelEditItem = $labelEditItem;
@@ -125,7 +116,6 @@ class LabelInfo
     {
         return $this->labelUpdateItem;
     }
-
     public function setLabelUpdateItem(string $labelUpdateItem): LabelInfo
     {
         $this->labelUpdateItem = $labelUpdateItem;
@@ -136,7 +126,6 @@ class LabelInfo
     {
         return $this->labelSearchItems;
     }
-
     public function setLabelSearchItems(string $labelSearchItems): LabelInfo
     {
         $this->labelSearchItems = $labelSearchItems;
@@ -147,7 +136,6 @@ class LabelInfo
     {
         return $this->labelNotFound;
     }
-
     public function setLabelNotFound(string $labelNotFound): LabelInfo
     {
         $this->labelNotFound = $labelNotFound;
@@ -158,7 +146,6 @@ class LabelInfo
     {
         return $this->labelNotFoundInTrash;
     }
-
     public function setLabelNotFoundInTrash(string $labelNotFoundInTrash): LabelInfo
     {
         $this->labelNotFoundInTrash = $labelNotFoundInTrash;
@@ -169,7 +156,6 @@ class LabelInfo
     {
         return $this->labelNewItem;
     }
-
     public function setLabelNewItem(string $labelNewItem): LabelInfo
     {
         $this->labelNewItem = $labelNewItem;
@@ -180,14 +166,13 @@ class LabelInfo
     {
         return $this->labelViewItems;
     }
-
     public function setLabelViewItems(string $labelViewItems): LabelInfo
     {
         $this->labelViewItems = $labelViewItems;
         return $this;
     }
 
-    public function getArgs():array {
+    public function getLabelArgs():array {
         return [
             'name' => $this->getLabelName(),
             'singular_name' => $this->getLabelSingularName(),
