@@ -11,6 +11,9 @@
             "email": "kevin@wellmann.io"
         }
     ],
+    "config": {
+        "process-timeout": 0
+    },
     "autoload": {
         "psr-4": {
             "CEKW\\WpPluginFramework\\Core\\": "src/"
