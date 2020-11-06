@@ -7,8 +7,9 @@ use CEKW\WpPluginFramework\Core\DynamicKeyResolverTrait;
 class PostType
 {
     use DynamicKeyResolverTrait;
-    use LabelTrait;
     use MetaBoxTrait;
+
+    private LabelInfo $labelInfo;
 
     private bool $isPublic = false;
 
@@ -34,21 +35,19 @@ class PostType
         return [
             'public' => $this->isPublic,
             'supports' => ['title'],
-            'labels' => [
-                'name' => $this->labelName,
-                'singular_name' => $this->labelSingularName,
-                'menu_name' => $this->labelMenuName,
-                'parent_item_colon' => $this->labelParentItemColon,
-                'all_items' => $this->labelAllItems,
-                'view_item' => $this->labelViewItem,
-                'add_new_item' => $this->labelAddNewItem,
-                'add_new' => $this->labelAddNew,
-                'edit_item' => $this->labelEditItem,
-                'update_item' => $this->labelUpdateItem,
-                'search_items' => $this->labelSearchItems,
-                'not_found' => $this->labelNotFound,
-                'not_found_in_trash' => $this->labelNotFoundInTrash
-            ]
+            'labels' => $this->labelInfo->getArgs()
         ];
     }
+
+    public function getLabelInfo(): LabelInfo
+    {
+        return $this->labelInfo;
+    }
+
+    public function setLabelInfo(LabelInfo $labelInfo): PostType
+    {
+        $this->labelInfo = $labelInfo;
+        return $this;
+    }
+
 }
