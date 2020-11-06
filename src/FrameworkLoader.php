@@ -26,7 +26,7 @@ final class FrameworkLoader
 
     public function setDirUrl(string $dirUrl): FrameworkLoader
     {
-        $this->dirPath = $dirUrl;
+        $this->dirUrl = $dirUrl;
 
         return $this;
     }
@@ -106,7 +106,7 @@ final class FrameworkLoader
         }
     }
 
-    private function registerPostTypesTaxonomies()
+    public function registerPostTypesTaxonomies()
     {
         foreach ($this->modules as $module) {
             foreach ($module->getPostTypes() as $postType) {
@@ -119,7 +119,7 @@ final class FrameworkLoader
         }
     }
 
-    private function createMetaBoxes()
+    public function createMetaBoxes()
     {
         foreach ($this->modules as $module) {
             foreach ($module->getPostTypes() as $postType) {
@@ -136,7 +136,7 @@ final class FrameworkLoader
         }
     }
 
-    private function registerWidgets()
+    public function registerWidgets()
     {
         foreach ($this->modules as $module) {
             foreach ($module->getWidgets() as $widget) {
