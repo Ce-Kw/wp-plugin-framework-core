@@ -2,7 +2,7 @@
 
 namespace CEKW\WpPluginFramework\Core\ContentType;
 
-trait LabelTrait
+class LabelInfo
 {
     private string $labelName = '';
     private string $labelSingularName = '';
@@ -24,8 +24,7 @@ trait LabelTrait
     {
         return $this->labelName;
     }
-
-    public function setLabelName(string $labelName): PostType
+    public function setLabelName(string $labelName): LabelInfo
     {
         $this->labelName = $labelName;
 
@@ -36,8 +35,7 @@ trait LabelTrait
     {
         return $this->labelSingularName;
     }
-
-    public function setLabelSingularName(string $labelSingularName): PostType
+    public function setLabelSingularName(string $labelSingularName): LabelInfo
     {
         $this->labelSingularName = $labelSingularName;
         
@@ -48,8 +46,7 @@ trait LabelTrait
     {
         return $this->labelMenuName;
     }
-
-    public function setLabelMenuName(string $labelMenuName): PostType
+    public function setLabelMenuName(string $labelMenuName): LabelInfo
     {
         $this->labelMenuName = $labelMenuName;
         return $this;
@@ -59,8 +56,7 @@ trait LabelTrait
     {
         return $this->labelParentItemColon;
     }
-
-    public function setLabelParentItemColon(string $labelParentItemColon): PostType
+    public function setLabelParentItemColon(string $labelParentItemColon): LabelInfo
     {
         $this->labelParentItemColon = $labelParentItemColon;
         return $this;
@@ -70,8 +66,7 @@ trait LabelTrait
     {
         return $this->labelAllItems;
     }
-
-    public function setLabelAllItems(string $labelAllItems): PostType
+    public function setLabelAllItems(string $labelAllItems): LabelInfo
     {
         $this->labelAllItems = $labelAllItems;
         return $this;
@@ -81,18 +76,17 @@ trait LabelTrait
     {
         return $this->labelViewItem;
     }
-
-    public function setLabelViewItem(string $labelViewItem): PostType
+    public function setLabelViewItem(string $labelViewItem): LabelInfo
     {
         $this->labelViewItem = $labelViewItem;
+        return $this;
     }
 
     public function getLabelAddNewItem(): string
     {
         return $this->labelAddNewItem;
     }
-
-    public function setLabelAddNewItem(string $labelAddNewItem): PostType
+    public function setLabelAddNewItem(string $labelAddNewItem): LabelInfo
     {
         $this->labelAddNewItem = $labelAddNewItem;
         return $this;
@@ -102,8 +96,7 @@ trait LabelTrait
     {
         return $this->labelAddNew;
     }
-
-    public function setLabelAddNew(string $labelAddNew): PostType
+    public function setLabelAddNew(string $labelAddNew): LabelInfo
     {
         $this->labelAddNew = $labelAddNew;
         return $this;
@@ -113,18 +106,17 @@ trait LabelTrait
     {
         return $this->labelEditItem;
     }
-
-    public function setLabelEditItem(string $labelEditItem): PostType
+    public function setLabelEditItem(string $labelEditItem): LabelInfo
     {
         $this->labelEditItem = $labelEditItem;
+        return $this;
     }
 
     public function getLabelUpdateItem(): string
     {
         return $this->labelUpdateItem;
     }
-
-    public function setLabelUpdateItem(string $labelUpdateItem): PostType
+    public function setLabelUpdateItem(string $labelUpdateItem): LabelInfo
     {
         $this->labelUpdateItem = $labelUpdateItem;
         return $this;
@@ -134,8 +126,7 @@ trait LabelTrait
     {
         return $this->labelSearchItems;
     }
-
-    public function setLabelSearchItems(string $labelSearchItems): PostType
+    public function setLabelSearchItems(string $labelSearchItems): LabelInfo
     {
         $this->labelSearchItems = $labelSearchItems;
         return $this;
@@ -145,8 +136,7 @@ trait LabelTrait
     {
         return $this->labelNotFound;
     }
-
-    public function setLabelNotFound(string $labelNotFound): PostType
+    public function setLabelNotFound(string $labelNotFound): LabelInfo
     {
         $this->labelNotFound = $labelNotFound;
         return $this;
@@ -156,10 +146,47 @@ trait LabelTrait
     {
         return $this->labelNotFoundInTrash;
     }
-
-    public function setLabelNotFoundInTrash(string $labelNotFoundInTrash): PostType
+    public function setLabelNotFoundInTrash(string $labelNotFoundInTrash): LabelInfo
     {
         $this->labelNotFoundInTrash = $labelNotFoundInTrash;
         return $this;
+    }
+
+    public function getLabelNewItem(): string
+    {
+        return $this->labelNewItem;
+    }
+    public function setLabelNewItem(string $labelNewItem): LabelInfo
+    {
+        $this->labelNewItem = $labelNewItem;
+        return $this;
+    }
+
+    public function getLabelViewItems(): string
+    {
+        return $this->labelViewItems;
+    }
+    public function setLabelViewItems(string $labelViewItems): LabelInfo
+    {
+        $this->labelViewItems = $labelViewItems;
+        return $this;
+    }
+
+    public function getLabelArgs():array {
+        return [
+            'name' => $this->getLabelName(),
+            'singular_name' => $this->getLabelSingularName(),
+            'menu_name' => $this->getLabelMenuName(),
+            'parent_item_colon' => $this->getLabelParentItemColon(),
+            'all_items' => $this->getLabelAllItems(),
+            'view_item' => $this->getLabelViewItem(),
+            'add_new_item' => $this->getLabelAddNewItem(),
+            'add_new' => $this->getLabelAddNew(),
+            'edit_item' => $this->getLabelEditItem(),
+            'update_item' => $this->getLabelUpdateItem(),
+            'search_items' => $this->getLabelSearchItems(),
+            'not_found' => $this->getLabelNotFound(),
+            'not_found_in_trash' => $this->getLabelNotFoundInTrash()
+        ];
     }
 }
