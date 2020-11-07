@@ -46,6 +46,11 @@ class PostType extends AbstractExtenderBridge
 
     private bool $isPublic = false;
 
+    /**
+     * @var Taxonomy[]
+     */
+    private array $taxonomies = [];
+
     public function __construct()
     {
         $this->addExtend(new LabelInfo());
@@ -75,5 +80,15 @@ class PostType extends AbstractExtenderBridge
             'supports' => ['title'],
             'labels' => $this->getLabelArgs()
         ];
+    }
+
+    public function addTaxonomy(Taxonomy $taxonomy): void
+    {
+        $this->taxonomies[] = $taxonomy;
+    }
+
+    public function getTaxonomies(): array
+    {
+        return $this->taxonomies;
     }
 }

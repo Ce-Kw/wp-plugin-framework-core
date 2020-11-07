@@ -3,7 +3,6 @@
 namespace CEKW\WpPluginFramework\Core\Module;
 
 use CEKW\WpPluginFramework\Core\ContentType\PostType;
-use CEKW\WpPluginFramework\Core\ContentType\Taxonomy;
 use CEKW\WpPluginFramework\Core\Shortcode\AbstractShortcode;
 use WP_Widget;
 
@@ -13,11 +12,6 @@ abstract class AbstractModule implements ModuleInterface
      * @var PostType[]
      */
     private array $postTypes = [];
-
-    /**
-     * @var Taxonomy[]
-     */
-    private array $taxonomies = [];
 
     /**
      * @var AbstractShortcode[]
@@ -37,16 +31,6 @@ abstract class AbstractModule implements ModuleInterface
     public function getPostTypes(): array
     {
         return $this->postTypes;
-    }
-
-    public function addTaxonomy(Taxonomy $taxonomy): void
-    {
-        $this->taxonomies[] = $taxonomy;
-    }
-
-    public function getTaxonomies(): array
-    {
-        return $this->taxonomies;
     }
 
     public function addShortcode(AbstractShortcode $shortcode): void
