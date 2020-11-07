@@ -38,7 +38,7 @@ class LabelInfo
     public function setLabelSingularName(string $labelSingularName): LabelInfo
     {
         $this->labelSingularName = $labelSingularName;
-        
+
         return $this;
     }
 
@@ -172,7 +172,8 @@ class LabelInfo
         return $this;
     }
 
-    public function getLabelArgs():array {
+    public function getLabelArgs(): array
+    {
         return [
             'name' => $this->getLabelName(),
             'singular_name' => $this->getLabelSingularName(),

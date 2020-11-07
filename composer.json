@@ -21,6 +21,10 @@
     },
     "scripts": {
         "build:cc": "vendor/bin/phpunit -c phpunit.xml --coverage-html coverage/",
+        "build:cs-diff": "vendor/bin/phpcs --report-diff=cs.diff src",
+        "check:cs": "vendor/bin/phpcs src -p --colors",
+        "fix:cs": "vendor/bin/phpcbf src -p --colors",
+        "patch:cs-diff": "patch -p0 -ui cs.diff",
         "start-server:cc": "php -S 127.0.0.1:8000 -t coverage/",
         "test": "vendor/bin/phpunit -c phpunit.xml"
     },
