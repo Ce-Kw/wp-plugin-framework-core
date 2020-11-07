@@ -16,6 +16,5 @@
   <rule ref="Squiz.NamingConventions.ValidVariableName.StringNotCamelCaps"/>
   <rule ref="WordPress.DB.PreparedSQLPlaceholders"/>
   <rule ref="WordPress.DB.PreparedSQL"/>
-	<rule ref="WordPress.NamingConventions.ValidHookName"/>
   <rule ref="WordPress.WP.I18n"/>
 </ruleset>

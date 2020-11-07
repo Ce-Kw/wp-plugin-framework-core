@@ -16,7 +16,7 @@ abstract class AbstractPackage implements PackageInterface
 
     public function setDirUrl(string $dirUrl): void
     {
-        $this->dirPath = $dirUrl;
+        $this->dirUrl = $dirUrl;
     }
 
     protected function loadConfig(string $config)
