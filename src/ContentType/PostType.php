@@ -4,6 +4,7 @@ namespace CEKW\WpPluginFramework\Core\ContentType;
 
 use CEKW\WpPluginFramework\Core\AbstractExtenderBridge;
 use CEKW\WpPluginFramework\Core\DynamicKeyResolverTrait;
+use WP_REST_Posts_Controller;
 
 /**
  * @method array getLabelArgs
@@ -45,6 +46,24 @@ class PostType extends AbstractExtenderBridge
     use MetaBoxTrait;
 
     private bool $isPublic = false;
+    private bool $isHierarchical = false;
+    private ?bool $excludeFromSearch = null;
+    private ?bool $isPubliclyQueryable = null;
+    private ?bool $showUi = null;
+    private ?bool $showInMenu = null;
+    private ?bool $showInNavMenus = null;
+    private ?bool $showInAdminBar = null;
+    private bool $showInRest = false;
+    private string $restBase = '';
+    private string $restControllerClass = '';
+    private ?int $menuPosition = null;
+    private string $menuIcon = '';
+    private string $capabilityType = 'post';
+    private array $capabilities = [];
+    private bool $mapMetaCap = false;
+    private array $supports = ['title', 'editor'];
+    private bool $hasArchive = false;
+    private array $rewrite = [];
 
     /**
      * @var Taxonomy[]
@@ -56,16 +75,14 @@ class PostType extends AbstractExtenderBridge
         $this->addExtend(new LabelInfo());
     }
 
-    public function getIsPublic(): bool
+    public function addTaxonomy(Taxonomy $taxonomy): void
     {
-        return $this->isPublic;
+        $this->taxonomies[] = $taxonomy;
     }
 
-    public function setIsPublic(bool $isPublic): PostType
+    public function getTaxonomies(): array
     {
-        $this->isPublic = $isPublic;
-
-        return $this;
+        return $this->taxonomies;
     }
 
     public function getKey(): string
@@ -75,20 +92,171 @@ class PostType extends AbstractExtenderBridge
 
     public function getArgs(): array
     {
-        return [
+        $args = [
             'public' => $this->isPublic,
-            'supports' => ['title'],
+            'hierarchical' => $this->isHierarchical,
+            'exclude_from_search' => is_null($this->excludeFromSearch) ? !$this->isPublic : $this->excludeFromSearch,
+            'publicly_queryable' => is_null($this->isPubliclyQueryable) ? $this->isPublic : $this->isPubliclyQueryable,
+            'show_ui' => is_null($this->showUi) ? $this->isPublic : $this->showUi,
+            'show_in_menu' => is_null($this->showInMenu) ? $this->showUi : $this->showInMenu,
+            'show_in_nav_menus' => is_null($this->showInNavMenus) ? $this->isPublic : $this->showInNavMenus,
+            'show_in_admin_bar' => is_null($this->showInAdminBar) ? $this->showInMenu : $this->showInAdminBar,
+            'show_in_rest' => $this->showInRest,
+            'rest_base' => empty($this->restBase) ? $this->key : $this->restBase,
+            'rest_controller_class' => empty($this->restControllerClass) ? WP_REST_Posts_Controller::class : $this->restControllerClass,
+            'menu_position' => $this->menuPosition,
+            'menu_icon' => $this->menuIcon,
+            'capability_type' => $this->capabilityType,
+            'map_meta_cap' => $this->mapMetaCap,
+            'supports' => $this->supports,
+            'has_archive' => $this->hasArchive,
             'labels' => $this->getLabelArgs()
         ];
+
+        if (!empty($this->capabilities)) {
+            $args['capabilities'] = $this->capabilities;
+        }
+
+        if (!empty($this->rewrite)) {
+            $args['rewrite'] = $this->rewrite;
+        }
+
+        return $args;
     }
 
-    public function addTaxonomy(Taxonomy $taxonomy): void
+    public function setIsPublic(bool $isPublic): PostType
     {
-        $this->taxonomies[] = $taxonomy;
+        $this->isPublic = $isPublic;
+
+        return $this;
     }
 
-    public function getTaxonomies(): array
+    public function setIsHierarchical(bool $isHierarchical): PostType
     {
-        return $this->taxonomies;
+        $this->isHierarchical = $isHierarchical;
+
+        return $this;
+    }
+
+    public function setExcludeFromSearch(bool $excludeFromSearch): PostType
+    {
+        $this->excludeFromSearch = $excludeFromSearch;
+
+        return $this;
+    }
+
+    public function setIsPubliclyQueryable(bool $isPubliclyQueryable): PostType
+    {
+        $this->isPubliclyQueryable = $isPubliclyQueryable;
+
+        return $this;
+    }
+
+    public function setShowUi(bool $showUi): PostType
+    {
+        $this->showUi = $showUi;
+
+        return $this;
+    }
+
+    public function setShowInMenu(bool $showInMenu): PostType
+    {
+        $this->showInMenu = $showInMenu;
+
+        return $this;
+    }
+
+    public function setShowInNavMenus(bool $showInNavMenus): PostType
+    {
+        $this->showInNavMenus = $showInNavMenus;
+
+        return $this;
+    }
+
+    public function setShowInAdminBar(bool $showInAdminBar): PostType
+    {
+        $this->showInAdminBar = $showInAdminBar;
+
+        return $this;
+    }
+
+    public function setShowInRest(bool $showInRest): PostType
+    {
+        $this->showInRest = $showInRest;
+
+        return $this;
+    }
+
+    public function setRestBase(string $restBase): PostType
+    {
+        $this->restBase = $restBase;
+
+        return $this;
+    }
+
+    public function setRestControllerClass(string $restControllerClass): PostType
+    {
+        $this->restControllerClass = $restControllerClass;
+
+        return $this;
+    }
+
+    public function setMenuPosition(int $menuPosition): PostType
+    {
+        $this->menuPosition = $menuPosition;
+
+        return $this;
+    }
+
+    public function setMenuIcon(string $menuIcon): PostType
+    {
+        $this->menuIcon = $menuIcon;
+
+        return $this;
+    }
+
+    /**
+     * @param string|array $capabilityType
+     */
+    public function setCapabilityType($capabilityType): PostType
+    {
+        $this->capabilityType = $capabilityType;
+
+        return $this;
+    }
+
+    public function setCapabilities(array $capabilities): PostType
+    {
+        $this->capabilities = $capabilities;
+
+        return $this;
+    }
+
+    public function setMapMetaCap(bool $mapMetaCap): PostType
+    {
+        $this->mapMetaCap = $mapMetaCap;
+
+        return $this;
+    }
+
+    public function setSupports(array $supports): PostType
+    {
+        $this->supports = $supports;
+
+        return $this;
+    }
+
+    public function setHasArchive(bool $hasArchive): PostType
+    {
+        $this->hasArchive = $hasArchive;
+
+        return $this;
+    }
+
+    public function setRewrite(array $rewrite): PostType
+    {
+        $this->rewrite = $rewrite;
+
+        return $this;
     }
 }
