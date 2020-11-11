@@ -13,10 +13,10 @@ class DynamicKeyResolverTraitTest extends MockeryTestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testResolveKeyFromClassName($suffix, $className, $expectedResult)
+    public function testResolveKeyFromClassName($suffix, $className, $expectedResult, $delimiter)
     {
         $traitClassMock = $this->getMockForTrait(DynamicKeyResolverTrait::class, [], $className);
-        $result = $traitClassMock->resolveKeyFromClassName($suffix);
+        $result = $traitClassMock->resolveKeyFromClassName($suffix, $delimiter);
 
         $this->assertEquals($expectedResult, $result);
     }
@@ -24,12 +24,14 @@ class DynamicKeyResolverTraitTest extends MockeryTestCase
     public function dataProvider()
     {
         return [
-            ['PostType', 'BookPostType', 'book'],
-            ['PostType', 'ContactPersonPostType', 'contact-person'],
-            ['PostType', 'MyPostTypeWithSuperLongKeyPostType', 'my-post-type-with-super-long-key'],
-            ['Taxonomy', 'GenreTaxonomy', 'genre'],
-            ['Taxonomy', 'OldLocationTaxonomy', 'old-location'],
-            ['Taxonomy', 'MyCustomTaxonomyWhichIsKindaLongTaxonomy', 'my-custom-taxonomy-which-is-kinda-long'],
+            ['PostType', 'BookPostType', 'book', '-'],
+            ['PostType', 'ContactPersonPostType', 'contact-person', '-'],
+            ['PostType', 'MyPostTypeWithSuperLongKeyPostType', 'my-post-type-with-super-long-key', '-'],
+            ['Taxonomy', 'GenreTaxonomy', 'genre', '-'],
+            ['Taxonomy', 'OldLocationTaxonomy', 'old-location', '-'],
+            ['Taxonomy', 'MyCustomTaxonomyWhichIsKindaLongTaxonomy', 'my-custom-taxonomy-which-is-kinda-long', '-'],
+            ['Event', 'BookImportEvent', 'book_import', '_'],
+            ['Event', 'MyEventThatGetsCalledAfterAnotherEvent', 'my_event_that_gets_called_after_another', '_'],
         ];
     }
 }
