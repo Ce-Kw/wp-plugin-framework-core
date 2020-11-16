@@ -7,7 +7,7 @@ use CEKW\WpPluginFramework\Core\Package\PackageInterface;
 
 use const WP_CLI;
 
-final class FrameworkLoader
+class FrameworkLoader
 {
     private string $dirPath;
     private string $dirUrl;

@@ -102,7 +102,7 @@ class PostType extends AbstractExtenderBridge
             'show_in_nav_menus' => is_null($this->showInNavMenus) ? $this->isPublic : $this->showInNavMenus,
             'show_in_admin_bar' => is_null($this->showInAdminBar) ? $this->showInMenu : $this->showInAdminBar,
             'show_in_rest' => $this->showInRest,
-            'rest_base' => empty($this->restBase) ? $this->key : $this->restBase,
+            'rest_base' => empty($this->restBase) ? $this->getKey() : $this->restBase,
             'rest_controller_class' => empty($this->restControllerClass) ? WP_REST_Posts_Controller::class : $this->restControllerClass,
             'menu_position' => $this->menuPosition,
             'menu_icon' => $this->menuIcon,
@@ -129,6 +129,9 @@ class PostType extends AbstractExtenderBridge
         $this->isPublic = $isPublic;
 
         return $this;
+    }
+    public function getIsPublic():bool {
+        return $this->isPublic;
     }
 
     public function setIsHierarchical(bool $isHierarchical): PostType

@@ -9,5 +9,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
  */
 class AbstractPackageTest extends MockeryTestCase
 {
-
+    public function testDummy(){
+        $this->assertSame(true,true);
+    }
 }

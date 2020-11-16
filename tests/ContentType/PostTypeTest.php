@@ -39,4 +39,11 @@ class PostTypeTest extends MockeryTestCase
         $this->assertArrayHasKey('labels',$this->postType->getArgs());
     }
 
+    public function testSetGetLabelInnfo():void{
+        $testLabelName = 'Labelname';
+        $this->postType->setLabelName($testLabelName);
+
+        $this->assertSame($testLabelName, $this->postType->getLabelName());
+    }
+
 }
