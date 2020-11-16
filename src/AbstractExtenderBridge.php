@@ -19,6 +19,10 @@ abstract class AbstractExtenderBridge
                 return call_user_func_array([$instance,$method], $args);
             }
         }, $this->extends);
+
+        if (substr($method, 0, 3) === 'set') {
+            return $this;
+        }
         return count($result) === 1 ? $result[0] : $result;
     }
 }
