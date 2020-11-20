@@ -9,6 +9,7 @@ class FrameworkLoader
 {
     private string $rootDirPath;
     private string $rootDirUrl;
+    private string $subDirSources = 'src';
 
     /**
      * @var ModuleInterface[] $modules
@@ -43,7 +44,7 @@ class FrameworkLoader
 
     public function loadModules(string $namespace): FrameworkLoader
     {
-        $modulesDirectory = $this->getRootDirPath() . 'src';
+        $modulesDirectory = $this->getRootDirPath() . $this->getSubDirSources();
         foreach (scandir($modulesDirectory) as $subDirectory) {
             if (in_array($subDirectory, ['.', '..'])) {
                 continue;
@@ -150,5 +151,16 @@ class FrameworkLoader
                 add_shortcode($shortcode->getTag(), [$shortcode, 'render']);
             }
         }
+    }
+
+    public function getSubDirSources(): string
+    {
+        return $this->subDirSources;
+    }
+
+    public function setSubDirSources(string $subDirSources): FrameworkLoader
+    {
+        $this->subDirSources = $subDirSources;
+        return $this;
     }
 }
