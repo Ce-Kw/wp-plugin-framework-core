@@ -9,6 +9,10 @@ use WP_Widget;
 
 interface ModuleInterface
 {
+    public function activate():ModuleInterface;
+    public function deactivate():ModuleInterface;
+    public function init():ModuleInterface;
+
     /**
      * @return PostType[]
      */

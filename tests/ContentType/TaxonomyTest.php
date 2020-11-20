@@ -5,6 +5,13 @@ namespace CEKW\WpPluginFramework\Tests\ContentType;
 use CEKW\WpPluginFramework\Core\ContentType\Taxonomy;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
+class TstTaxonomy extends Taxonomy {
+    function init()
+    {
+
+    }
+}
+
 /**
  * @covers \CEKW\WpPluginFramework\Core\ContentType\Taxonomy
  */
@@ -14,7 +21,7 @@ class TaxonomyTest extends MockeryTestCase
 
     public function setUp(): void
     {
-        $this->taxonomy = new Taxonomy();
+        $this->taxonomy = new TstTaxonomy();
     }
 
     public function testSetGetIsPublic(): void

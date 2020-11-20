@@ -39,28 +39,9 @@ use CEKW\WpPluginFramework\Core\DynamicKeyResolverTrait;
  * @method string getLabelNotFoundInTrash
  * @method LabelInfo setLabelNotFoundInTrash
  */
-class Taxonomy extends AbstractExtenderBridge
+abstract class Taxonomy extends ContentType
 {
     use DynamicKeyResolverTrait;
-    use MetaBoxTrait;
-
-    private bool $isPublic = false;
-
-    public function __construct()
-    {
-        $this->addExtend(new LabelInfo());
-    }
-
-    public function getIsPublic(): bool
-    {
-        return $this->isPublic;
-    }
-
-    public function setIsPublic(bool $isPublic): Taxonomy
-    {
-        $this->isPublic = $isPublic;
-        return $this;
-    }
 
     public function getKey(): string
     {
@@ -70,7 +51,7 @@ class Taxonomy extends AbstractExtenderBridge
     public function getArgs(): array
     {
         return [
-            'public' => $this->isPublic,
+            'public' => $this->getIsPublic(),
             'supports' => ['title'],
             'labels' => $this->getLabelArgs()
         ];

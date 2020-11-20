@@ -40,11 +40,8 @@ use WP_REST_Posts_Controller;
  * @method LabelInfo setLabelNotFoundInTrash
  * @method MetaBox[] getMetaBoxes
  */
-abstract class PostType extends AbstractExtenderBridge {
+abstract class PostType extends ContentType {
 
-	use DynamicKeyResolverTrait;
-
-	private bool $isPublic              = false;
 	private bool $isHierarchical        = false;
 	private ?bool $excludeFromSearch    = null;
 	private ?bool $isPubliclyQueryable  = null;
@@ -60,7 +57,6 @@ abstract class PostType extends AbstractExtenderBridge {
 	private string $capabilityType      = 'post';
 	private array $capabilities         = array();
 	private bool $mapMetaCap            = false;
-	private array $supports             = array( 'title', 'editor' );
 	private bool $hasArchive            = false;
 	private array $rewrite              = array();
 
@@ -69,18 +65,8 @@ abstract class PostType extends AbstractExtenderBridge {
 	 */
 	private array $taxonomies = array();
 
-	abstract function init();
-
-	final public function __construct() {
-		$this->addExtend( new LabelInfo() );
-		$this->addExtend( new MetaBoxProvider() );
-		$this->init();
-	}
-
-	public function addMetaBox(MetaBox $metaBox):PostType {
-	    $metaBox->setObjectTypes([$this->getKey()]);
-	    $this->_addMetaBox($metaBox);
-	    return $this;
+    public function getKey(): string {
+        return $this->resolveKeyFromClassName( 'PostType' );
     }
 
 	public function addTaxonomy( Taxonomy $taxonomy ): void {
@@ -91,19 +77,15 @@ abstract class PostType extends AbstractExtenderBridge {
 		return $this->taxonomies;
 	}
 
-	public function getKey(): string {
-		return $this->resolveKeyFromClassName( 'PostType' );
-	}
-
 	public function getArgs(): array {
 		$args = array(
-			'public'                => $this->isPublic,
+			'public'                => $this->getIsPublic(),
 			'hierarchical'          => $this->isHierarchical,
-			'exclude_from_search'   => is_null( $this->excludeFromSearch ) ? ! $this->isPublic : $this->excludeFromSearch,
-			'publicly_queryable'    => is_null( $this->isPubliclyQueryable ) ? $this->isPublic : $this->isPubliclyQueryable,
-			'show_ui'               => is_null( $this->showUi ) ? $this->isPublic : $this->showUi,
+			'exclude_from_search'   => is_null( $this->excludeFromSearch ) ? ! $this->getIsPublic() : $this->excludeFromSearch,
+			'publicly_queryable'    => is_null( $this->isPubliclyQueryable ) ? $this->getIsPublic() : $this->isPubliclyQueryable,
+			'show_ui'               => is_null( $this->showUi ) ? $this->getIsPublic() : $this->showUi,
 			'show_in_menu'          => is_null( $this->showInMenu ) ? $this->showUi : $this->showInMenu,
-			'show_in_nav_menus'     => is_null( $this->showInNavMenus ) ? $this->isPublic : $this->showInNavMenus,
+			'show_in_nav_menus'     => is_null( $this->showInNavMenus ) ? $this->getIsPublic() : $this->showInNavMenus,
 			'show_in_admin_bar'     => is_null( $this->showInAdminBar ) ? $this->showInMenu : $this->showInAdminBar,
 			'show_in_rest'          => $this->showInRest,
 			'rest_base'             => empty( $this->restBase ) ? $this->getKey() : $this->restBase,
@@ -112,7 +94,7 @@ abstract class PostType extends AbstractExtenderBridge {
 			'menu_icon'             => $this->menuIcon,
 			'capability_type'       => $this->capabilityType,
 			'map_meta_cap'          => $this->mapMetaCap,
-			'supports'              => $this->supports,
+			'supports'              => $this->getSupports(),
 			'has_archive'           => $this->hasArchive,
 			'labels'                => $this->getLabelArgs(),
 		);
@@ -127,15 +109,6 @@ abstract class PostType extends AbstractExtenderBridge {
 
 		return $args;
 	}
-
-	public function setIsPublic( bool $isPublic ): PostType {
-		$this->isPublic = $isPublic;
-
-		return $this;
-	}
-	public function getIsPublic():bool {
-	    return $this->isPublic;
-    }
 
 	public function setIsHierarchical( bool $isHierarchical ): PostType {
 		$this->isHierarchical = $isHierarchical;
@@ -226,12 +199,6 @@ abstract class PostType extends AbstractExtenderBridge {
 
 	public function setMapMetaCap( bool $mapMetaCap ): PostType {
 		$this->mapMetaCap = $mapMetaCap;
-
-		return $this;
-	}
-
-	public function setSupports( array $supports ): PostType {
-		$this->supports = $supports;
 
 		return $this;
 	}

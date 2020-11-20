@@ -7,6 +7,13 @@ use CEKW\WpPluginFramework\Core\ContentType\PostType;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery as M;
 
+class TstPosttype extends PostType {
+    function init()
+    {
+
+    }
+}
+
 /**
  * @covers \CEKW\WpPluginFramework\Core\ContentType\PostType
  * @covers \CEKW\WpPluginFramework\Core\ContentType\LabelInfo
@@ -18,7 +25,7 @@ class PostTypeTest extends MockeryTestCase
 
     public function setUp(): void
     {
-        $this->postType = new PostType();
+        $this->postType = new TstPosttype();
     }
 
     public function testSetGetIsPublic(): void
@@ -30,7 +37,7 @@ class PostTypeTest extends MockeryTestCase
 
     public function testSetKey(): void
     {
-        $testValue = '';
+        $testValue = 'tst-posttype';
         $this->assertSame($testValue, $this->postType->getKey());
     }
 

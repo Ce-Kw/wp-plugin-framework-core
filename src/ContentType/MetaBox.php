@@ -5,7 +5,7 @@ namespace CEKW\WpPluginFramework\Core\ContentType;
 class MetaBox
 {
     private string $context;
-    private array $object_types;
+    private array $object_types = [];
     private string $priority;
     private bool $show_in_rest = false;
     private bool $show_names = true;

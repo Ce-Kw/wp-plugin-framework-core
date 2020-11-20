@@ -6,6 +6,9 @@ use CEKW\WpPluginFramework\Core\ContentType\MetaBox;
 use CEKW\WpPluginFramework\Core\ContentType\MetaBoxProvider;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
+/**
+ * @covers \CEKW\WpPluginFramework\Core\ContentType\MetaBoxProvider
+ */
 class MetaBoxProviderTest extends MockeryTestCase
 {
     public function testSomething(){
@@ -15,6 +18,6 @@ class MetaBoxProviderTest extends MockeryTestCase
 
         $testProvider->_addMetaBox($metaBox);
 
-        $this->assertSame([],$testProvider->getMetaBoxes());
+        $this->assertSame([$metaBox],$testProvider->getMetaBoxes());
     }
 }

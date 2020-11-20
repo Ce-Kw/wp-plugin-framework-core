@@ -5,8 +5,6 @@ namespace CEKW\WpPluginFramework\Core;
 use CEKW\WpPluginFramework\Core\Module\ModuleInterface;
 use CEKW\WpPluginFramework\Core\Package\PackageInterface;
 
-use const WP_CLI;
-
 class FrameworkLoader
 {
     private string $rootDirPath;
@@ -73,7 +71,7 @@ class FrameworkLoader
         return $this;
     }
 
-    public function init()
+    public function init(): FrameworkLoader
     {
         add_action('init', [$this, 'registerPostTypesTaxonomies']);
         add_action('cmb2_admin_init', [$this, 'createMetaBoxes']);
@@ -81,10 +79,7 @@ class FrameworkLoader
 
         $this->addShortcodes();
 
-        $cliCommands = $this->getRootDirPath() . 'config/routes/command.php';
-        if (defined('WP_CLI') && WP_CLI && file_exists($cliCommands)) {
-            include_once $cliCommands;
-        }
+        return $this;
     }
 
     public function activate()
