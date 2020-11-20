@@ -8,7 +8,6 @@ use WP_REST_Posts_Controller;
 
 /**
  * @method array getLabelArgs
- * @method LabelInfo setLabelArgs
  * @method string getLabelName
  * @method LabelInfo setLabelName
  * @method string getLabelSingularName
@@ -39,227 +38,213 @@ use WP_REST_Posts_Controller;
  * @method LabelInfo setLabelNotFound
  * @method string getLabelNotFoundInTrash
  * @method LabelInfo setLabelNotFoundInTrash
+ * @method MetaBox[] getMetaBoxes
  */
-class PostType extends AbstractExtenderBridge
-{
-    use DynamicKeyResolverTrait;
-    use MetaBoxTrait;
+abstract class PostType extends AbstractExtenderBridge {
 
-    private bool $isPublic = false;
-    private bool $isHierarchical = false;
-    private ?bool $excludeFromSearch = null;
-    private ?bool $isPubliclyQueryable = null;
-    private ?bool $showUi = null;
-    private ?bool $showInMenu = null;
-    private ?bool $showInNavMenus = null;
-    private ?bool $showInAdminBar = null;
-    private bool $showInRest = false;
-    private string $restBase = '';
-    private string $restControllerClass = '';
-    private ?int $menuPosition = null;
-    private string $menuIcon = '';
-    private string $capabilityType = 'post';
-    private array $capabilities = [];
-    private bool $mapMetaCap = false;
-    private array $supports = ['title', 'editor'];
-    private bool $hasArchive = false;
-    private array $rewrite = [];
+	use DynamicKeyResolverTrait;
 
-    /**
-     * @var Taxonomy[]
-     */
-    private array $taxonomies = [];
+	private bool $isPublic              = false;
+	private bool $isHierarchical        = false;
+	private ?bool $excludeFromSearch    = null;
+	private ?bool $isPubliclyQueryable  = null;
+	private ?bool $showUi               = null;
+	private ?bool $showInMenu           = null;
+	private ?bool $showInNavMenus       = null;
+	private ?bool $showInAdminBar       = null;
+	private bool $showInRest            = false;
+	private string $restBase            = '';
+	private string $restControllerClass = '';
+	private ?int $menuPosition          = null;
+	private string $menuIcon            = '';
+	private string $capabilityType      = 'post';
+	private array $capabilities         = array();
+	private bool $mapMetaCap            = false;
+	private array $supports             = array( 'title', 'editor' );
+	private bool $hasArchive            = false;
+	private array $rewrite              = array();
 
-    public function __construct()
-    {
-        $this->addExtend(new LabelInfo());
+	/**
+	 * @var Taxonomy[]
+	 */
+	private array $taxonomies = array();
+
+	abstract function init();
+
+	final public function __construct() {
+		$this->addExtend( new LabelInfo() );
+		$this->addExtend( new MetaBoxProvider() );
+		$this->init();
+	}
+
+	public function addMetaBox(MetaBox $metaBox):PostType {
+	    $metaBox->setObjectTypes([$this->getKey()]);
+	    $this->_addMetaBox($metaBox);
+	    return $this;
     }
 
-    public function addTaxonomy(Taxonomy $taxonomy): void
-    {
-        $this->taxonomies[] = $taxonomy;
+	public function addTaxonomy( Taxonomy $taxonomy ): void {
+		$this->taxonomies[] = $taxonomy;
+	}
+
+	public function getTaxonomies(): array {
+		return $this->taxonomies;
+	}
+
+	public function getKey(): string {
+		return $this->resolveKeyFromClassName( 'PostType' );
+	}
+
+	public function getArgs(): array {
+		$args = array(
+			'public'                => $this->isPublic,
+			'hierarchical'          => $this->isHierarchical,
+			'exclude_from_search'   => is_null( $this->excludeFromSearch ) ? ! $this->isPublic : $this->excludeFromSearch,
+			'publicly_queryable'    => is_null( $this->isPubliclyQueryable ) ? $this->isPublic : $this->isPubliclyQueryable,
+			'show_ui'               => is_null( $this->showUi ) ? $this->isPublic : $this->showUi,
+			'show_in_menu'          => is_null( $this->showInMenu ) ? $this->showUi : $this->showInMenu,
+			'show_in_nav_menus'     => is_null( $this->showInNavMenus ) ? $this->isPublic : $this->showInNavMenus,
+			'show_in_admin_bar'     => is_null( $this->showInAdminBar ) ? $this->showInMenu : $this->showInAdminBar,
+			'show_in_rest'          => $this->showInRest,
+			'rest_base'             => empty( $this->restBase ) ? $this->getKey() : $this->restBase,
+			'rest_controller_class' => empty( $this->restControllerClass ) ? WP_REST_Posts_Controller::class : $this->restControllerClass,
+			'menu_position'         => $this->menuPosition,
+			'menu_icon'             => $this->menuIcon,
+			'capability_type'       => $this->capabilityType,
+			'map_meta_cap'          => $this->mapMetaCap,
+			'supports'              => $this->supports,
+			'has_archive'           => $this->hasArchive,
+			'labels'                => $this->getLabelArgs(),
+		);
+
+		if ( ! empty( $this->capabilities ) ) {
+			$args['capabilities'] = $this->capabilities;
+		}
+
+		if ( ! empty( $this->rewrite ) ) {
+			$args['rewrite'] = $this->rewrite;
+		}
+
+		return $args;
+	}
+
+	public function setIsPublic( bool $isPublic ): PostType {
+		$this->isPublic = $isPublic;
+
+		return $this;
+	}
+	public function getIsPublic():bool {
+	    return $this->isPublic;
     }
 
-    public function getTaxonomies(): array
-    {
-        return $this->taxonomies;
-    }
+	public function setIsHierarchical( bool $isHierarchical ): PostType {
+		$this->isHierarchical = $isHierarchical;
 
-    public function getKey(): string
-    {
-        return $this->resolveKeyFromClassName('PostType');
-    }
+		return $this;
+	}
 
-    public function getArgs(): array
-    {
-        $args = [
-            'public' => $this->isPublic,
-            'hierarchical' => $this->isHierarchical,
-            'exclude_from_search' => is_null($this->excludeFromSearch) ? !$this->isPublic : $this->excludeFromSearch,
-            'publicly_queryable' => is_null($this->isPubliclyQueryable) ? $this->isPublic : $this->isPubliclyQueryable,
-            'show_ui' => is_null($this->showUi) ? $this->isPublic : $this->showUi,
-            'show_in_menu' => is_null($this->showInMenu) ? $this->showUi : $this->showInMenu,
-            'show_in_nav_menus' => is_null($this->showInNavMenus) ? $this->isPublic : $this->showInNavMenus,
-            'show_in_admin_bar' => is_null($this->showInAdminBar) ? $this->showInMenu : $this->showInAdminBar,
-            'show_in_rest' => $this->showInRest,
-            'rest_base' => empty($this->restBase) ? $this->getKey() : $this->restBase,
-            'rest_controller_class' => empty($this->restControllerClass) ? WP_REST_Posts_Controller::class : $this->restControllerClass,
-            'menu_position' => $this->menuPosition,
-            'menu_icon' => $this->menuIcon,
-            'capability_type' => $this->capabilityType,
-            'map_meta_cap' => $this->mapMetaCap,
-            'supports' => $this->supports,
-            'has_archive' => $this->hasArchive,
-            'labels' => $this->getLabelArgs()
-        ];
+	public function setExcludeFromSearch( bool $excludeFromSearch ): PostType {
+		$this->excludeFromSearch = $excludeFromSearch;
 
-        if (!empty($this->capabilities)) {
-            $args['capabilities'] = $this->capabilities;
-        }
+		return $this;
+	}
 
-        if (!empty($this->rewrite)) {
-            $args['rewrite'] = $this->rewrite;
-        }
+	public function setIsPubliclyQueryable( bool $isPubliclyQueryable ): PostType {
+		$this->isPubliclyQueryable = $isPubliclyQueryable;
 
-        return $args;
-    }
+		return $this;
+	}
 
-    public function setIsPublic(bool $isPublic): PostType
-    {
-        $this->isPublic = $isPublic;
+	public function setShowUi( bool $showUi ): PostType {
+		$this->showUi = $showUi;
 
-        return $this;
-    }
-    public function getIsPublic():bool {
-        return $this->isPublic;
-    }
+		return $this;
+	}
 
-    public function setIsHierarchical(bool $isHierarchical): PostType
-    {
-        $this->isHierarchical = $isHierarchical;
+	public function setShowInMenu( bool $showInMenu ): PostType {
+		$this->showInMenu = $showInMenu;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function setExcludeFromSearch(bool $excludeFromSearch): PostType
-    {
-        $this->excludeFromSearch = $excludeFromSearch;
+	public function setShowInNavMenus( bool $showInNavMenus ): PostType {
+		$this->showInNavMenus = $showInNavMenus;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function setIsPubliclyQueryable(bool $isPubliclyQueryable): PostType
-    {
-        $this->isPubliclyQueryable = $isPubliclyQueryable;
+	public function setShowInAdminBar( bool $showInAdminBar ): PostType {
+		$this->showInAdminBar = $showInAdminBar;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function setShowUi(bool $showUi): PostType
-    {
-        $this->showUi = $showUi;
+	public function setShowInRest( bool $showInRest ): PostType {
+		$this->showInRest = $showInRest;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function setShowInMenu(bool $showInMenu): PostType
-    {
-        $this->showInMenu = $showInMenu;
+	public function setRestBase( string $restBase ): PostType {
+		$this->restBase = $restBase;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function setShowInNavMenus(bool $showInNavMenus): PostType
-    {
-        $this->showInNavMenus = $showInNavMenus;
+	public function setRestControllerClass( string $restControllerClass ): PostType {
+		$this->restControllerClass = $restControllerClass;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function setShowInAdminBar(bool $showInAdminBar): PostType
-    {
-        $this->showInAdminBar = $showInAdminBar;
+	public function setMenuPosition( int $menuPosition ): PostType {
+		$this->menuPosition = $menuPosition;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function setShowInRest(bool $showInRest): PostType
-    {
-        $this->showInRest = $showInRest;
+	public function setMenuIcon( string $menuIcon ): PostType {
+		$this->menuIcon = $menuIcon;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function setRestBase(string $restBase): PostType
-    {
-        $this->restBase = $restBase;
+	/**
+	 * @param string|array $capabilityType
+	 */
+	public function setCapabilityType( $capabilityType ): PostType {
+		$this->capabilityType = $capabilityType;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function setRestControllerClass(string $restControllerClass): PostType
-    {
-        $this->restControllerClass = $restControllerClass;
+	public function setCapabilities( array $capabilities ): PostType {
+		$this->capabilities = $capabilities;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function setMenuPosition(int $menuPosition): PostType
-    {
-        $this->menuPosition = $menuPosition;
+	public function setMapMetaCap( bool $mapMetaCap ): PostType {
+		$this->mapMetaCap = $mapMetaCap;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function setMenuIcon(string $menuIcon): PostType
-    {
-        $this->menuIcon = $menuIcon;
+	public function setSupports( array $supports ): PostType {
+		$this->supports = $supports;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * @param string|array $capabilityType
-     */
-    public function setCapabilityType($capabilityType): PostType
-    {
-        $this->capabilityType = $capabilityType;
+	public function setHasArchive( bool $hasArchive ): PostType {
+		$this->hasArchive = $hasArchive;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function setCapabilities(array $capabilities): PostType
-    {
-        $this->capabilities = $capabilities;
+	public function setRewrite( array $rewrite ): PostType {
+		$this->rewrite = $rewrite;
 
-        return $this;
-    }
-
-    public function setMapMetaCap(bool $mapMetaCap): PostType
-    {
-        $this->mapMetaCap = $mapMetaCap;
-
-        return $this;
-    }
-
-    public function setSupports(array $supports): PostType
-    {
-        $this->supports = $supports;
-
-        return $this;
-    }
-
-    public function setHasArchive(bool $hasArchive): PostType
-    {
-        $this->hasArchive = $hasArchive;
-
-        return $this;
-    }
-
-    public function setRewrite(array $rewrite): PostType
-    {
-        $this->rewrite = $rewrite;
-
-        return $this;
-    }
+		return $this;
+	}
 }

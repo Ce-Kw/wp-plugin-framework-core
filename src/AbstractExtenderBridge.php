@@ -14,15 +14,23 @@ abstract class AbstractExtenderBridge
 
     public function __call($method, $args)
     {
-        $result = array_map(function ($instance) use ($method, $args) {
+        $funcResults = array_map(function ($instance) use ($method, $args) {
             if (method_exists($instance, $method)) {
                 return call_user_func_array([$instance,$method], $args);
             }
+            return null;
         }, $this->extends);
 
         if (substr($method, 0, 3) === 'set') {
             return $this;
         }
-        return count($result) === 1 ? $result[0] : $result;
+
+        $result = [];
+        foreach ($funcResults as $key=>$value){
+            if($value===null){continue;}
+            $result[] = $value;
+        }
+
+        return count($result) === 1 ? $result[array_key_first($result)] : $result;
     }
 }

@@ -9,32 +9,35 @@ use const WP_CLI;
 
 class FrameworkLoader
 {
-    private string $dirPath;
-    private string $dirUrl;
+    private string $rootDirPath;
+    private string $rootDirUrl;
 
     /**
      * @var ModuleInterface[] $modules
      */
     private array $modules = [];
 
-    public function setDirPath(string $dirPath): FrameworkLoader
+    public function getRootDirPath():string {
+        return $this->rootDirPath.(substr($this->rootDirPath,-1)!=='/'?'/':'');
+    }
+    public function setRootDirPath(string $rootDirPath): FrameworkLoader
     {
-        $this->dirPath = $dirPath;
+        $this->rootDirPath = $rootDirPath;
 
         return $this;
     }
 
-    public function setDirUrl(string $dirUrl): FrameworkLoader
+    public function setRootDirUrl(string $rootDirUrl): FrameworkLoader
     {
-        $this->dirUrl = $dirUrl;
+        $this->rootDirUrl = $rootDirUrl;
 
         return $this;
     }
 
     public function loadPackage(PackageInterface $package): FrameworkLoader
     {
-        $package->setDirPath($this->dirPath);
-        $package->setDirUrl($this->dirUrl);
+        $package->setDirPath($this->getRootDirPath());
+        $package->setDirUrl($this->rootDirUrl);
         $package->load();
 
         return $this;
@@ -42,7 +45,7 @@ class FrameworkLoader
 
     public function loadModules(string $namespace): FrameworkLoader
     {
-        $modulesDirectory = $this->dirPath . 'src';
+        $modulesDirectory = $this->getRootDirPath() . 'src';
         foreach (scandir($modulesDirectory) as $subDirectory) {
             if (in_array($subDirectory, ['.', '..'])) {
                 continue;
@@ -78,7 +81,7 @@ class FrameworkLoader
 
         $this->addShortcodes();
 
-        $cliCommands = $this->dirPath . 'config/routes/command.php';
+        $cliCommands = $this->getRootDirPath() . 'config/routes/command.php';
         if (defined('WP_CLI') && WP_CLI && file_exists($cliCommands)) {
             include_once $cliCommands;
         }
@@ -124,10 +127,10 @@ class FrameworkLoader
         foreach ($this->modules as $module) {
             foreach ($module->getPostTypes() as $postType) {
                 foreach ($postType->getMetaBoxes() as $metaBox) {
-                    new_cmb2_box($metaBox);
+                    new_cmb2_box($metaBox->getArgs());
 
-                    foreach ($postType->getTaxonomies() as $taxanomy) {
-                        foreach ($taxanomy->getMetaBoxes() as $metaBox) {
+                    foreach ($postType->getTaxonomies() as $taxonomy) {
+                        foreach ($taxonomy->getMetaBoxes() as $metaBox) {
                             new_cmb2_box($metaBox);
                         }
                     }

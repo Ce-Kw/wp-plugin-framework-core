@@ -2,8 +2,10 @@
 
 namespace CEKW\WpPluginFramework\Tests\ContentType;
 
+use CEKW\WpPluginFramework\Core\ContentType\MetaBox;
 use CEKW\WpPluginFramework\Core\ContentType\PostType;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Mockery as M;
 
 /**
  * @covers \CEKW\WpPluginFramework\Core\ContentType\PostType
@@ -54,4 +56,5 @@ class PostTypeTest extends MockeryTestCase
 
         $this->assertSame($testIsPublic, $this->postType->getIsPublic());
     }
+
 }
