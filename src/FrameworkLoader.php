@@ -60,7 +60,7 @@ class FrameworkLoader
                 continue;
             }
 
-            $instance->init();
+            add_action('init', [$instance, 'init']);
 
             if (method_exists($instance, 'admin')) {
                 add_action('admin_init', [$instance, 'admin']);

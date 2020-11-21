@@ -23,11 +23,11 @@ abstract class AbstractModule implements ModuleInterface
      */
     private array $widgets = [];
 
-    public function activate(): ModuleInterface{ }
+    public function activate(): ModuleInterface{ return $this; }
 
-    public function deactivate(): ModuleInterface{ }
+    public function deactivate(): ModuleInterface{ return $this; }
 
-    public function init(): ModuleInterface{ }
+    public function init(): ModuleInterface{ return $this; }
 
     public function addPostType(PostType $postType): void
     {
