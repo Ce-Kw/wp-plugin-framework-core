@@ -19,11 +19,6 @@ interface ModuleInterface
     public function getPostTypes(): array;
 
     /**
-     * @return Taxonomy[]
-     */
-    public function getTaxonomies(): array;
-
-    /**
      * @return ShortcodeInterface[]
      */
     public function getShortcodes(): array;
