@@ -10,6 +10,6 @@ abstract class AbstractShortcode implements ShortcodeInterface
 
     public function getTag(): string
     {
-        return $this->resolveKeyFromClassName('Shortcode');
+        return $this->resolveKeyFromClassName('Shortcode', '_');
     }
 }
