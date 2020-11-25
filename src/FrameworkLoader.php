@@ -75,7 +75,7 @@ class FrameworkLoader
             }
             $instance->setApplicationName($subDirectory);
 
-            add_action(WpAction::INIT, [$instance, 'init']);
+            $instance->init();
 
             if (method_exists($instance, 'admin')) {
                 $infoDto->useAdminInit = true;
@@ -84,6 +84,7 @@ class FrameworkLoader
 
             $this->modules[] = $instance;
 
+            $infoDto->postTypes = $instance->getPostTypes();
             $infoDto->adminScripts = array_map(function($script)use($subDirectory){
                 $dto = $script->getObjectCopy();
                 $dto->source = $this->rootDirUrl.$this->getSubDirSources().'/'.$subDirectory.'/'.$script->source;

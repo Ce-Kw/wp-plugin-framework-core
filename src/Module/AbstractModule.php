@@ -42,9 +42,10 @@ abstract class AbstractModule implements ModuleInterface
 
     public function init(): ModuleInterface{ return $this; }
 
-    public function addPostType(PostType $postType): void
+    public function addPostType(PostType $postType): AbstractModule
     {
         $this->postTypes[] = $postType;
+        return $this;
     }
 
     public function getPostTypes(): array

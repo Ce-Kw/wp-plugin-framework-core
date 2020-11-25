@@ -2,6 +2,7 @@
 
 namespace CEKW\WpPluginFramework\Core\View;
 
+use CEKW\WpPluginFramework\Core\ContentType\PostType;
 use CEKW\WpPluginFramework\Core\DTO\AssetDefinitionDTO;
 use CEKW\WpPluginFramework\Core\DTO\ModuleInfoDTO;
 use WP_List_Table;
@@ -43,10 +44,28 @@ class ModulesAdminTableView extends WP_List_Table
         return $result;
     }
 
+    public function column_posttypes(ModuleInfoDTO $item){
+        if(count($item->postTypes)===0){return '';}
+        $result='<ul style="margin: 0;">';
+
+        /**
+         * @var PostType $postType
+         */
+        array_map(function($postType)use(&$result){
+            $result .= '<li style="">
+                            <span style="min-width: 40%;display: inline-block">'.($postType->isPublic()?'&#128083;':'&#128374;').$postType->getKey().'</span>
+                            <span style="cursor:pointer;" onClick="alert(\''.str_replace('\\','\\\\',get_class($postType)).'\')">&#10067</span>
+                        </li>';
+        },$item->postTypes);
+        $result .='</ul>';
+        return $result;
+    }
+
     public function get_columns() {
         $columns = [
             'name' => 'Name',
             'assets' => 'Assets',
+            'posttypes' => 'PostTypes',
             'useAdminInit' => 'Admin-Init'
         ];
 
