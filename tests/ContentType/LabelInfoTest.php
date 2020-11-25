@@ -65,4 +65,13 @@ class LabelInfoTest extends MockeryTestCase
         $this->labelInfo->setLabelViewItem($testValue);
         $this->assertSame($testValue, $this->labelInfo->getLabelViewItem());
     }
+
+    public function testGetLabelArgsShouldNotReturnEmptyValues(){
+        $testName = 'ok';
+        $this->assertSame($this->labelInfo->getLabelArgs(),[]);
+        $this->labelInfo->setLabelName($testName);
+        $this->assertSame($this->labelInfo->getLabelArgs(),[
+            'name'=>$testName
+        ]);
+    }
 }

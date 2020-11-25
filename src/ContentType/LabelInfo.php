@@ -174,7 +174,7 @@ class LabelInfo
 
     public function getLabelArgs(): array
     {
-        return [
+        return array_filter([
             'name' => $this->getLabelName(),
             'singular_name' => $this->getLabelSingularName(),
             'menu_name' => $this->getLabelMenuName(),
@@ -188,6 +188,6 @@ class LabelInfo
             'search_items' => $this->getLabelSearchItems(),
             'not_found' => $this->getLabelNotFound(),
             'not_found_in_trash' => $this->getLabelNotFoundInTrash()
-        ];
+        ],function($value){return $value!=='';});
     }
 }
