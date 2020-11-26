@@ -36,11 +36,11 @@ abstract class AbstractModule implements ModuleInterface
      */
     private array $modulesInfos;
 
-    public function activate(): ModuleInterface{ return $this; }
+    public function activate() {}
 
-    public function deactivate(): ModuleInterface{ return $this; }
+    public function deactivate() {}
 
-    public function init(): ModuleInterface{ return $this; }
+    abstract public function init();
 
     public function addPostType(PostType $postType): AbstractModule
     {
