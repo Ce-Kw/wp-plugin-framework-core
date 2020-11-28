@@ -98,10 +98,8 @@ class MetaBox
         return $this;
     }
 
-    public function addField(string $field_name):MetaBox {
-        $this->fields[] = [
-
-        ];
+    public function addField(array $field):MetaBox {
+        $this->fields[] = $field;
         return $this;
     }
     public function setFields(array $fields):MetaBox {
