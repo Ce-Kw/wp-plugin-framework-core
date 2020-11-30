@@ -57,6 +57,7 @@ abstract class PostType extends ContentType {
 	private string $capabilityType      = 'post';
 	private array $capabilities         = array();
 	private bool $mapMetaCap            = false;
+	private array $supports = array( 'title', 'editor' );
 	private bool $hasArchive            = false;
 	private array $rewrite              = array();
 
@@ -214,4 +215,12 @@ abstract class PostType extends ContentType {
 
 		return $this;
 	}
+
+	public function addSupports(string $support):ContentType {
+        $this->supports[] = $support;
+        return $this;
+    }
+    public function getSupports():array {
+        return $this->supports;
+    }
 }

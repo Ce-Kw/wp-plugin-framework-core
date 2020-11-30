@@ -10,7 +10,6 @@ abstract class ContentType extends AbstractExtenderBridge
     use DynamicKeyResolverTrait;
 
     private bool $isPublic  = false;
-    private array $supports = array( 'title' );
 
     abstract function init();
 
@@ -27,14 +26,6 @@ abstract class ContentType extends AbstractExtenderBridge
     }
     public function getIsPublic():bool {
         return $this->isPublic;
-    }
-
-    public function addSupports(string $support):ContentType {
-        $this->supports[] = $support;
-        return $this;
-    }
-    public function getSupports():array {
-        return $this->supports;
     }
 
     public function addMetaBox(MetaBox $metaBox):ContentType {

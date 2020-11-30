@@ -52,7 +52,6 @@ abstract class Taxonomy extends ContentType
     {
         return [
             'public' => $this->getIsPublic(),
-            'supports' => ['title'],
             'labels' => $this->getLabelArgs()
         ];
     }
