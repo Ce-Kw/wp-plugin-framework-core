@@ -93,12 +93,20 @@ abstract class PostType extends ContentType {
 			'rest_controller_class' => empty( $this->restControllerClass ) ? WP_REST_Posts_Controller::class : $this->restControllerClass,
 			'menu_position'         => $this->menuPosition,
 			'menu_icon'             => $this->menuIcon,
-			'capability_type'       => $this->capabilityType,
 			'map_meta_cap'          => $this->mapMetaCap,
 			'supports'              => $this->getSupports(),
 			'has_archive'           => $this->hasArchive,
 			'labels'                => $this->getLabelArgs(),
 		);
+
+		if ( ! empty( $this->capabilityType ) ) {
+			$args['capability_type'] = $this->capabilityType;
+		}
+
+		if ( ! empty( $this->mapMetaCap ) ) {
+			$args['map_meta_cap'] = $this->mapMetaCap;
+		}
+
 
 		if ( ! empty( $this->capabilities ) ) {
 			$args['capabilities'] = $this->capabilities;
