@@ -78,6 +78,17 @@ abstract class PostType extends ContentType {
 		return $this->taxonomies;
 	}
 
+	public function addMeta(string $key, string $type = 'string', array $args = [])
+	{
+		$args = array_merge([
+			'show_in_rest' => true,
+			'single' => true,
+			'type' => $type,
+		], $args);
+		
+		register_post_meta($this->getKey(), $key, $args);
+	}
+
 	public function getArgs(): array {
 		$args = array(
 			'public'                => $this->getIsPublic(),
