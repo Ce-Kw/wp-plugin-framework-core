@@ -50,9 +50,19 @@ abstract class Taxonomy extends ContentType
 
     public function getArgs(): array
     {
-        return [
-            'public' => $this->getIsPublic(),
-            'labels' => $this->getLabelArgs()
-        ];
+        $args = array(
+			'public'                => $this->getIsPublic(),
+			'hierarchical'          => $this->isHierarchical,
+			'publicly_queryable'    => is_null( $this->isPubliclyQueryable ) ? $this->getIsPublic() : $this->isPubliclyQueryable,
+			'show_ui'               => is_null( $this->showUi ) ? $this->getIsPublic() : $this->showUi,
+			'show_in_menu'          => is_null( $this->showInMenu ) ? $this->showUi : $this->showInMenu,
+			'show_in_nav_menus'     => is_null( $this->showInNavMenus ) ? $this->getIsPublic() : $this->showInNavMenus,
+			'show_in_rest'          => $this->showInRest,
+			'rest_base'             => empty( $this->restBase ) ? $this->getKey() : $this->restBase,
+			'rest_controller_class' => empty( $this->restControllerClass ) ? WP_REST_Terms_Controller::class : $this->restControllerClass,
+			'labels'                => $this->getLabelArgs(),
+        );
+        
+        return $args;
     }
 }

@@ -42,16 +42,8 @@ use WP_REST_Posts_Controller;
  */
 abstract class PostType extends ContentType {
 
-	private bool $isHierarchical        = false;
 	private ?bool $excludeFromSearch    = null;
-	private ?bool $isPubliclyQueryable  = null;
-	private ?bool $showUi               = null;
-	private ?bool $showInMenu           = null;
-	private ?bool $showInNavMenus       = null;
 	private ?bool $showInAdminBar       = null;
-	private bool $showInRest            = false;
-	private string $restBase            = '';
-	private string $restControllerClass = '';
 	private ?int $menuPosition          = null;
 	private string $menuIcon            = '';
 	private string $capabilityType      = 'post';
@@ -104,7 +96,6 @@ abstract class PostType extends ContentType {
 			'rest_controller_class' => empty( $this->restControllerClass ) ? WP_REST_Posts_Controller::class : $this->restControllerClass,
 			'menu_position'         => $this->menuPosition,
 			'menu_icon'             => $this->menuIcon,
-			'map_meta_cap'          => $this->mapMetaCap,
 			'supports'              => $this->getSupports(),
 			'has_archive'           => $this->hasArchive,
 			'labels'                => $this->getLabelArgs(),
@@ -130,62 +121,14 @@ abstract class PostType extends ContentType {
 		return $args;
 	}
 
-	public function setIsHierarchical( bool $isHierarchical ): PostType {
-		$this->isHierarchical = $isHierarchical;
-
-		return $this;
-	}
-
 	public function setExcludeFromSearch( bool $excludeFromSearch ): PostType {
 		$this->excludeFromSearch = $excludeFromSearch;
 
 		return $this;
 	}
 
-	public function setIsPubliclyQueryable( bool $isPubliclyQueryable ): PostType {
-		$this->isPubliclyQueryable = $isPubliclyQueryable;
-
-		return $this;
-	}
-
-	public function setShowUi( bool $showUi ): PostType {
-		$this->showUi = $showUi;
-
-		return $this;
-	}
-
-	public function setShowInMenu( bool $showInMenu ): PostType {
-		$this->showInMenu = $showInMenu;
-
-		return $this;
-	}
-
-	public function setShowInNavMenus( bool $showInNavMenus ): PostType {
-		$this->showInNavMenus = $showInNavMenus;
-
-		return $this;
-	}
-
 	public function setShowInAdminBar( bool $showInAdminBar ): PostType {
 		$this->showInAdminBar = $showInAdminBar;
-
-		return $this;
-	}
-
-	public function setShowInRest( bool $showInRest ): PostType {
-		$this->showInRest = $showInRest;
-
-		return $this;
-	}
-
-	public function setRestBase( string $restBase ): PostType {
-		$this->restBase = $restBase;
-
-		return $this;
-	}
-
-	public function setRestControllerClass( string $restControllerClass ): PostType {
-		$this->restControllerClass = $restControllerClass;
 
 		return $this;
 	}
