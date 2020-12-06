@@ -9,15 +9,15 @@ abstract class ContentType extends AbstractExtenderBridge
 {
     use DynamicKeyResolverTrait;
 
-    private bool $isHierarchical        = false;
-    private bool $isPublic  = false;
-    private ?bool $isPubliclyQueryable  = null;
-    private ?bool $showUi               = null;
-	private ?bool $showInMenu           = null;
-    private ?bool $showInNavMenus       = null;
-    private bool $showInRest            = false;
-    private string $restBase            = '';
-    private string $restControllerClass = '';
+    protected bool $isHierarchical        = false;
+    protected bool $isPublic  = false;
+    protected ?bool $isPubliclyQueryable  = null;
+    protected ?bool $showUi               = null;
+    protected ?bool $showInMenu           = null;
+    protected ?bool $showInNavMenus       = null;
+    protected bool $showInRest            = false;
+    protected string $restBase            = '';
+    protected string $restControllerClass = '';
 
     abstract function init();
 
