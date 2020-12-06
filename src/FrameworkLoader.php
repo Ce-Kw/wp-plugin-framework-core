@@ -115,7 +115,7 @@ class FrameworkLoader
     public function init(): FrameworkLoader
     {
         add_action(WpAction::ADMIN_MENU,function (){
-            add_menu_page('CEKW','CEKW','manage_options','cekw',function(){
+            add_submenu_page('', 'CEKW','CEKW','manage_options','cekw',function(){
                 $page = new AdminPageView();
                 $overviewTable = new ModulesAdminTableView();
                 $overviewTable
