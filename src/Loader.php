@@ -5,46 +5,36 @@ namespace CEKW\WpPluginFramework\Core;
 use CEKW\WpPluginFramework\Core\Module\ModuleInterface;
 use CEKW\WpPluginFramework\Core\Package\PackageInterface;
 
-class FrameworkLoader
+final class Loader
 {
-    private string $rootDirPath;
-    private string $rootDirUrl;
-    private string $subDirSources = 'src';
+    private string $basename = '';
+    private string $rootDirPath = '';
+    private string $rootDirUrl = '';
 
     /**
      * @var ModuleInterface[] $modules
      */
     private array $modules = [];
 
-    public function getRootDirPath():string {
-        return $this->rootDirPath.(substr($this->rootDirPath,-1)!=='/'?'/':'');
-    }
-    public function setRootDirPath(string $rootDirPath): FrameworkLoader
+    public function __construct(string $file)
     {
-        $this->rootDirPath = $rootDirPath;
-
-        return $this;
+        $this->basename = plugin_basename($file);
+        $this->rootDirPath = plugin_dir_path($file);
+        $this->rootDirUrl = plugin_dir_url($file);
     }
 
-    public function setRootDirUrl(string $rootDirUrl): FrameworkLoader
+    public function loadPackage(PackageInterface $package): Loader
     {
-        $this->rootDirUrl = $rootDirUrl;
-
-        return $this;
-    }
-
-    public function loadPackage(PackageInterface $package): FrameworkLoader
-    {
-        $package->setDirPath($this->getRootDirPath());
+        $package->setDirPath($this->rootDirPath);
         $package->setDirUrl($this->rootDirUrl);
         $package->load();
 
         return $this;
     }
 
-    public function loadModules(string $namespace): FrameworkLoader
+    public function loadModules(string $srcDir, string $namespace): Loader
     {
-        $modulesDirectory = $this->getRootDirPath() . $this->getSubDirSources();
+        $modulesDirectory = $this->rootDirPath . trailingslashit($srcDir);
         foreach (scandir($modulesDirectory) as $subDirectory) {
             if (in_array($subDirectory, ['.', '..'])) {
                 continue;
@@ -72,18 +62,16 @@ class FrameworkLoader
         return $this;
     }
 
-    public function init(): FrameworkLoader
+    public function init(): void
     {
-        add_action('init', [$this, 'registerPostTypesTaxonomies']);
         add_action('cmb2_admin_init', [$this, 'createMetaBoxes']);
+        add_action('init', [$this, 'registerContentTypes']);
         add_action('widgets_init', [$this, 'registerWidgets']);
 
         $this->addShortcodes();
-
-        return $this;
     }
 
-    public function activate()
+    public function activate(): void
     {
         foreach ($this->modules as $module) {
             if (!method_exists($module, 'activate')) {
@@ -94,7 +82,7 @@ class FrameworkLoader
         }
     }
 
-    public function deactivate()
+    public function deactivate(): void
     {
         foreach ($this->modules as $module) {
             if (!method_exists($module, 'deactivate')) {
@@ -105,7 +93,7 @@ class FrameworkLoader
         }
     }
 
-    public function registerPostTypesTaxonomies()
+    public function registerContentTypes(): void
     {
         foreach ($this->modules as $module) {
             foreach ($module->getPostTypes() as $postType) {
@@ -118,7 +106,7 @@ class FrameworkLoader
         }
     }
 
-    public function createMetaBoxes()
+    public function createMetaBoxes(): void
     {
         foreach ($this->modules as $module) {
             foreach ($module->getPostTypes() as $postType) {
@@ -135,7 +123,7 @@ class FrameworkLoader
         }
     }
 
-    public function registerWidgets()
+    public function registerWidgets(): void
     {
         foreach ($this->modules as $module) {
             foreach ($module->getWidgets() as $widget) {
@@ -144,23 +132,12 @@ class FrameworkLoader
         }
     }
 
-    private function addShortcodes()
+    private function addShortcodes(): void
     {
         foreach ($this->modules as $module) {
             foreach ($module->getShortcodes() as $shortcode) {
                 add_shortcode($shortcode->getTag(), [$shortcode, 'render']);
             }
         }
-    }
-
-    public function getSubDirSources(): string
-    {
-        return $this->subDirSources;
-    }
-
-    public function setSubDirSources(string $subDirSources): FrameworkLoader
-    {
-        $this->subDirSources = $subDirSources;
-        return $this;
     }
 }
