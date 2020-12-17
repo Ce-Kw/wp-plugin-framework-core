@@ -4,6 +4,8 @@ namespace CEKW\WpPluginFramework\Core;
 
 class ModuleInfoPage
 {
+    use TemplateAwareTrait;
+
     private const PAGE_SLUG = 'cekw-modules';
 
     private string $moduleInfoListTableClass = '';
@@ -26,20 +28,20 @@ class ModuleInfoPage
         return $links;
     }
 
-    public function addPage()
+    public function addPage(): void
     {
         add_submenu_page('', 'CEKW', 'CEKW', 'manage_options', self::PAGE_SLUG, [$this, 'render']);
     }
 
-    public function render()
+    public function render(): void
     {
         $moduleInfoListTable = new $this->moduleInfoListTableClass();
         $moduleInfoListTable->setModulesInfos($this->moduleInfos);
         $moduleInfoListTable->prepare_items();
 
-        ob_start();
-        include dirname(__DIR__) . '/templates/module-info.php';
-
-        echo ob_get_clean();
+        echo $this->renderTemplate(
+            dirname(__DIR__) . '/templates/module-info.php',
+            compact('moduleInfoListTable')
+        );
     }
 }

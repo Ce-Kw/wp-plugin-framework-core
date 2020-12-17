@@ -7,6 +7,8 @@ use WP_List_Table;
 
 class ModuleInfoListTable extends WP_List_Table
 {
+    use TemplateAwareTrait;
+
     // phpcs:ignore
     public function column_assets(ModuleInfoDTO $item): string
     {
@@ -37,13 +39,10 @@ class ModuleInfoListTable extends WP_List_Table
         $result = '<ul style="margin:0">';
 
         foreach ($item->postTypes as $postType) {
-            $content = ($postType->isPublic() ? '&#128083;' : '&#128374;') . $postType->getKey();
-            $alert = str_replace('\\', '\\\\', get_class($postType));
-
-            ob_start();
-            include dirname(__DIR__) . '/templates/module-info-column.php';
-
-            $result .= ob_get_clean();
+            $result .= $this->renderTemplate(dirname(__DIR__) . '/templates/module-info-column.php', [
+                'content' => ($postType->isPublic() ? '&#128083;' : '&#128374;') . $postType->getKey(),
+                'alert' => str_replace('\\', '\\\\', get_class($postType))
+            ]);
         }
 
         $result .= '</ul>';
@@ -114,13 +113,10 @@ class ModuleInfoListTable extends WP_List_Table
         $result = '<ul style="margin:0">' . $title;
 
         foreach ($assetDTOs as $dto) {
-            $content = $dto->name;
-            $alert = $dto->source;
-
-            ob_start();
-            include dirname(__DIR__) . '/templates/module-info-column.php';
-
-            $result .= ob_get_clean();
+            $result .= $this->renderTemplate(dirname(__DIR__) . '/templates/module-info-column.php', [
+                'content' => $dto->name,
+                'alert' => $dto->source
+            ]);
         }
 
         $result .= '</ul>';
