@@ -6,10 +6,10 @@ use Exception;
 
 class Schedule
 {
-    private Event $event;
-    private string $schedule;
+    private ?EventInterface $event = null;
+    private string $schedule = '';
 
-    public function addEvent(Event $event): Schedule
+    public function addEvent(EventInterface $event): Schedule
     {
         $this->event = $event;
 
@@ -39,7 +39,7 @@ class Schedule
         return $this;
     }
 
-    public function at(int $timestamp)
+    public function at(int $timestamp): void
     {
         if (!wp_next_scheduled($this->event->getHook())) {
             wp_schedule_event($timestamp, $this->schedule, $this->event->getHook());

@@ -4,7 +4,7 @@ namespace CEKW\WpPluginFramework\Core\Event;
 
 use CEKW\WpPluginFramework\Core\DynamicKeyResolverTrait;
 
-class Event
+abstract class AbstractEvent implements EventInterface
 {
     use DynamicKeyResolverTrait;
 
