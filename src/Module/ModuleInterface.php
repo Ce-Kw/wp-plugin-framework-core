@@ -4,13 +4,13 @@ namespace CEKW\WpPluginFramework\Core\Module;
 
 use CEKW\WpPluginFramework\Core\ContentType\PostType;
 use CEKW\WpPluginFramework\Core\ShortcodeInterface;
-use CEKW\WpPluginFramework\Core\ContentType\Taxonomy;
+use CEKW\WpPluginFramework\Core\Event\Schedule;
 use WP_Widget;
 
 interface ModuleInterface
 {
-    public function activate();
-    public function deactivate();
+    public function activate(Schedule $schedule);
+    public function deactivate(Schedule $schedule);
     public function init();
 
     /**

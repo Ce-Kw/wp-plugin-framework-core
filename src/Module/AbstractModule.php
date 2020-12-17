@@ -3,6 +3,7 @@
 namespace CEKW\WpPluginFramework\Core\Module;
 
 use CEKW\WpPluginFramework\Core\ContentType\PostType;
+use CEKW\WpPluginFramework\Core\Event\Schedule;
 use CEKW\WpPluginFramework\Core\Shortcode\AbstractShortcode;
 use WP_Widget;
 
@@ -28,9 +29,9 @@ abstract class AbstractModule implements ModuleInterface
      */
     private array $modulesInfos;
 
-    public function activate() {}
+    public function activate(Schedule $schedule) {} // phpcs:ignore
 
-    public function deactivate() {}
+    public function deactivate(Schedule $schedule) {} // phpcs:ignore
 
     abstract public function init();
 

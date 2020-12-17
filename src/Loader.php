@@ -2,12 +2,14 @@
 
 namespace CEKW\WpPluginFramework\Core;
 
+use CEKW\WpPluginFramework\Core\Event\Schedule;
 use CEKW\WpPluginFramework\Core\Module\ModuleInterface;
 use CEKW\WpPluginFramework\Core\Package\PackageInterface;
 
 final class Loader
 {
     private string $basename = '';
+    private string $file = '';
 
     /**
      * @var ModuleInterface[] $modules
@@ -20,12 +22,15 @@ final class Loader
     private array $moduleInfos = [];
     private string $rootDirPath = '';
     private string $rootDirUrl = '';
+    private ?Schedule $schedule = null;
 
     public function __construct(string $file)
     {
         $this->basename = plugin_basename($file);
+        $this->file = $file;
         $this->rootDirPath = plugin_dir_path($file);
         $this->rootDirUrl = plugin_dir_url($file);
+        $this->schedule = new Schedule();
     }
 
     public function loadPackage(PackageInterface $package): Loader
@@ -76,6 +81,9 @@ final class Loader
 
     public function init(): void
     {
+        register_activation_hook($this->file, [$this, 'activate']);
+        register_deactivation_hook($this->file, [$this, 'deactivate']);
+
         add_action('cmb2_admin_init', [$this, 'createMetaBoxes']);
         add_action('init', [$this, 'registerContentTypes']);
         add_action('widgets_init', [$this, 'registerWidgets']);
@@ -97,7 +105,7 @@ final class Loader
                 continue;
             }
 
-            $module->activate();
+            $module->activate($this->schedule);
         }
     }
 
@@ -108,7 +116,7 @@ final class Loader
                 continue;
             }
 
-            $module->deactivate();
+            $module->deactivate($this->schedule);
         }
     }
 
