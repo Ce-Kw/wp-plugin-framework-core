@@ -8,13 +8,18 @@ use CEKW\WpPluginFramework\Core\Package\PackageInterface;
 final class Loader
 {
     private string $basename = '';
-    private string $rootDirPath = '';
-    private string $rootDirUrl = '';
 
     /**
      * @var ModuleInterface[] $modules
      */
     private array $modules = [];
+
+    /**
+     * @var ModuleInfoDTO[]
+     */
+    private array $moduleInfos = [];
+    private string $rootDirPath = '';
+    private string $rootDirUrl = '';
 
     public function __construct(string $file)
     {
@@ -57,6 +62,13 @@ final class Loader
             }
 
             $this->modules[] = $instance;
+
+            $infoDto = new ModuleInfoDTO();
+            $infoDto->name = $subDirectory;
+            $infoDto->rootDir = $modulesDirectory . $subDirectory;
+            $infoDto->postTypes = $instance->getPostTypes();
+
+            $this->moduleInfos[] = $infoDto;
         }
 
         return $this;
@@ -69,6 +81,13 @@ final class Loader
         add_action('widgets_init', [$this, 'registerWidgets']);
 
         $this->addShortcodes();
+
+        if (is_admin()) {
+            $moduleInfoPage = new ModuleInfoPage(ModuleInfoListTable::class, $this->moduleInfos);
+
+            add_action('admin_menu', [$moduleInfoPage, 'addPage']);
+            add_filter('plugin_action_links_' . $this->basename, [$moduleInfoPage, 'addLink']);
+        }
     }
 
     public function activate(): void
