@@ -6,6 +6,8 @@ use CEKW\WpPluginFramework\Core\Event\Schedule;
 use CEKW\WpPluginFramework\Core\Module\ModuleInterface;
 use CEKW\WpPluginFramework\Core\Package\PackageInterface;
 
+use const WP_CLI;
+
 final class Loader
 {
     private string $basename = '';
@@ -60,8 +62,8 @@ final class Loader
 
             $instance->init();
 
-            if (method_exists($instance, 'admin')) {
-                add_action('admin_init', [$instance, 'admin']);
+            if (is_admin() && method_exists($instance, 'admin')) {
+                $instance->admin();
             }
 
             $this->modules[] = $instance;
@@ -93,6 +95,11 @@ final class Loader
 
             add_action('admin_menu', [$moduleInfoPage, 'addPage']);
             add_filter('plugin_action_links_' . $this->basename, [$moduleInfoPage, 'addLink']);
+        }
+
+        $cliCommands = $this->rootDirPath . 'config/routes/command.php';
+        if (defined('WP_CLI') && WP_CLI && file_exists($cliCommands)) {
+            include_once $cliCommands;
         }
     }
 }

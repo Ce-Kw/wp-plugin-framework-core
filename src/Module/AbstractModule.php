@@ -24,11 +24,6 @@ abstract class AbstractModule implements ModuleInterface
      */
     private array $widgets = [];
 
-    /**
-     * @var ModuleInfoDTO[]
-     */
-    private array $modulesInfos;
-
     public function activate(Schedule $schedule) {} // phpcs:ignore
 
     public function deactivate(Schedule $schedule) {} // phpcs:ignore
