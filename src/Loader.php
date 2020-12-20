@@ -22,7 +22,6 @@ final class Loader
     private array $moduleInfos = [];
     private string $rootDirPath = '';
     private string $rootDirUrl = '';
-    private ?Schedule $schedule = null;
 
     public function __construct(string $file)
     {
@@ -30,7 +29,6 @@ final class Loader
         $this->file = $file;
         $this->rootDirPath = plugin_dir_path($file);
         $this->rootDirUrl = plugin_dir_url($file);
-        $this->schedule = new Schedule();
     }
 
     public function loadPackage(PackageInterface $package): Loader
@@ -81,90 +79,20 @@ final class Loader
 
     public function init(): void
     {
-        register_activation_hook($this->file, [$this, 'activate']);
-        register_deactivation_hook($this->file, [$this, 'deactivate']);
+        $hookCollector = new HookCollector($this->modules, new Schedule());
 
-        add_action('cmb2_admin_init', [$this, 'createMetaBoxes']);
-        add_action('init', [$this, 'registerContentTypes']);
-        add_action('widgets_init', [$this, 'registerWidgets']);
+        register_activation_hook($this->file, [$hookCollector, 'activation']);
+        register_deactivation_hook($this->file, [$hookCollector, 'deactivation']);
 
-        $this->addShortcodes();
+        add_action('cmb2_admin_init', [$hookCollector, 'cmb2AdminInit']);
+        add_action('init', [$hookCollector, 'init']);
+        add_action('widgets_init', [$hookCollector, 'widgetsInit']);
 
         if (is_admin()) {
             $moduleInfoPage = new ModuleInfoPage(ModuleInfoListTable::class, $this->moduleInfos);
 
             add_action('admin_menu', [$moduleInfoPage, 'addPage']);
             add_filter('plugin_action_links_' . $this->basename, [$moduleInfoPage, 'addLink']);
-        }
-    }
-
-    public function activate(): void
-    {
-        foreach ($this->modules as $module) {
-            if (!method_exists($module, 'activate')) {
-                continue;
-            }
-
-            $module->activate($this->schedule);
-        }
-    }
-
-    public function deactivate(): void
-    {
-        foreach ($this->modules as $module) {
-            if (!method_exists($module, 'deactivate')) {
-                continue;
-            }
-
-            $module->deactivate($this->schedule);
-        }
-    }
-
-    public function registerContentTypes(): void
-    {
-        foreach ($this->modules as $module) {
-            foreach ($module->getPostTypes() as $postType) {
-                register_post_type($postType->getKey(), $postType->getArgs());
-
-                foreach ($postType->getTaxonomies() as $taxanomy) {
-                    register_taxonomy($taxanomy->getKey(), $postType->getKey(), $taxanomy->getArgs());
-                }
-            }
-        }
-    }
-
-    public function createMetaBoxes(): void
-    {
-        foreach ($this->modules as $module) {
-            foreach ($module->getPostTypes() as $postType) {
-                foreach ($postType->getMetaBoxes() as $metaBox) {
-                    new_cmb2_box($metaBox->getArgs());
-
-                    foreach ($postType->getTaxonomies() as $taxonomy) {
-                        foreach ($taxonomy->getMetaBoxes() as $metaBox) {
-                            new_cmb2_box($metaBox);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    public function registerWidgets(): void
-    {
-        foreach ($this->modules as $module) {
-            foreach ($module->getWidgets() as $widget) {
-                register_widget($widget);
-            }
-        }
-    }
-
-    private function addShortcodes(): void
-    {
-        foreach ($this->modules as $module) {
-            foreach ($module->getShortcodes() as $shortcode) {
-                add_shortcode($shortcode->getTag(), [$shortcode, 'render']);
-            }
         }
     }
 }
