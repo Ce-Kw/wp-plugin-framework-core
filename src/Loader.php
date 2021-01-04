@@ -13,6 +13,7 @@ final class Loader
     private string $basename = '';
     private string $file = '';
     private ?Injector $injector = null;
+    private string $prefix = '';
 
     /**
      * @var ModuleInterface[] $modules
@@ -31,6 +32,7 @@ final class Loader
         $this->basename = plugin_basename($file);
         $this->file = $file;
         $this->injector = new Injector();
+        $this->prefix = preg_replace('/-app$/', '', dirname($this->basename));
         $this->rootDirPath = plugin_dir_path($file);
         $this->rootDirUrl = plugin_dir_url($file);
     }
@@ -97,16 +99,37 @@ final class Loader
         add_action('init', [$hookCollector, 'init']);
         add_action('widgets_init', [$hookCollector, 'widgetsInit']);
 
-        if (is_admin()) {
-            $moduleInfoPage = new ModuleInfoPage(ModuleInfoListTable::class, $this->moduleInfos);
+        $this->addModuleInfoPage();
+        $this->loadCliCommands();
+        $this->loadLanguageFiles();
+    }
 
-            add_action('admin_menu', [$moduleInfoPage, 'addPage']);
-            add_filter('plugin_action_links_' . $this->basename, [$moduleInfoPage, 'addLink']);
+    private function addModuleInfoPage(): void
+    {
+        if (!is_admin()) {
+            return;
         }
 
+        $moduleInfoPage = new ModuleInfoPage(ModuleInfoListTable::class, $this->moduleInfos);
+
+        add_action('admin_menu', [$moduleInfoPage, 'addPage']);
+        add_filter('plugin_action_links_' . $this->basename, [$moduleInfoPage, 'addLink']);
+    }
+
+    private function loadCliCommands(): void
+    {
         $cliCommands = $this->rootDirPath . 'config/routes/command.php';
         if (defined('WP_CLI') && WP_CLI && file_exists($cliCommands)) {
             include_once $cliCommands;
         }
+    }
+
+    private function loadLanguageFiles(): void
+    {
+        if (!is_dir($this->rootDirPath . 'lang/')) {
+            return;
+        }
+
+        load_plugin_textdomain($this->prefix, false, dirname($this->basename) . '/lang/');
     }
 }
