@@ -2,7 +2,7 @@
 
 namespace CEKW\WpPluginFramework\Core;
 
-use CEKW\WpPluginFramework\Core\Event\Schedule;
+use Auryn\Injector;
 
 class HookCollector
 {
@@ -10,15 +10,15 @@ class HookCollector
      * @var ModuleInterface[] $modules
      */
     private array $modules = [];
-    private ?Schedule $schedule = null;
+    private ?Injector $injector = null;
 
     /**
      * @param ModuleInterface[] $modules
      */
-    public function __construct(array $modules, Schedule $schedule)
+    public function __construct(array $modules, Injector $injector)
     {
         $this->modules = $modules;
-        $this->schedule = $schedule;
+        $this->injector = $injector;
     }
 
     public function activation(): void
@@ -28,7 +28,7 @@ class HookCollector
                 continue;
             }
 
-            $module->activate($this->schedule);
+            $this->injector->execute([$module, 'activate']);
         }
     }
 
@@ -44,7 +44,7 @@ class HookCollector
                 continue;
             }
 
-            $module->deactivate($this->schedule);
+            $this->injector->execute([$module, 'deactivate']);
         }
     }
 

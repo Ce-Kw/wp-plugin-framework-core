@@ -2,7 +2,7 @@
 
 namespace CEKW\WpPluginFramework\Core;
 
-use CEKW\WpPluginFramework\Core\Event\Schedule;
+use Auryn\Injector;
 use CEKW\WpPluginFramework\Core\Module\ModuleInterface;
 use CEKW\WpPluginFramework\Core\Package\PackageInterface;
 
@@ -12,6 +12,7 @@ final class Loader
 {
     private string $basename = '';
     private string $file = '';
+    private ?Injector $injector = null;
 
     /**
      * @var ModuleInterface[] $modules
@@ -29,15 +30,18 @@ final class Loader
     {
         $this->basename = plugin_basename($file);
         $this->file = $file;
+        $this->injector = new Injector();
         $this->rootDirPath = plugin_dir_path($file);
         $this->rootDirUrl = plugin_dir_url($file);
     }
 
     public function loadPackage(PackageInterface $package): Loader
     {
-        $package->setDirPath($this->rootDirPath);
-        $package->setDirUrl($this->rootDirUrl);
-        $package->load();
+        $package
+            ->setDirPath($this->rootDirPath)
+            ->setDirUrl($this->rootDirUrl)
+            ->setInjector($this->injector)
+            ->load();
 
         return $this;
     }
@@ -60,6 +64,7 @@ final class Loader
                 continue;
             }
 
+            $instance->setInjector($this->injector);
             $instance->init();
 
             if (is_admin() && method_exists($instance, 'admin')) {
@@ -81,7 +86,9 @@ final class Loader
 
     public function init(): void
     {
-        $hookCollector = new HookCollector($this->modules, new Schedule());
+        $this->injector->share($GLOBALS['wpdb']);
+
+        $hookCollector = new HookCollector($this->modules, $this->injector);
 
         register_activation_hook($this->file, [$hookCollector, 'activation']);
         register_deactivation_hook($this->file, [$hookCollector, 'deactivation']);

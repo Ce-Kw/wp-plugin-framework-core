@@ -2,15 +2,23 @@
 
 namespace CEKW\WpPluginFramework\Core\RestRoute;
 
+use Auryn\Injector;
 use Exception;
+use WP_REST_Request;
 use WP_REST_Server;
 
 class RestRouteCollector
 {
     private string $namespace = '';
     private string $currentKey;
+    private ?Injector $injector = null;
     private array $routes = [];
     private $controllerClassInstance;
+
+    public function __construct(Injector $injector)
+    {
+        $this->injector = $injector;
+    }
 
     public function setNamespace(string $namespace): void
     {
@@ -40,7 +48,12 @@ class RestRouteCollector
 
     public function setController(array $controller): RestRouteCollector
     {
-        $this->routes[$this->currentKey]['callback'] = $this->getControllerClassCallback($controller);
+        $this->routes[$this->currentKey]['callback'] = function (WP_REST_Request $request) use ($controller) {
+            $this->injector->execute(
+                $this->getControllerClassCallback($controller),
+                [':request' => $request]
+            );
+        };
 
         return $this;
     }
