@@ -8,7 +8,7 @@ abstract class AbstractEvent implements EventInterface
 {
     use DynamicKeyResolverTrait;
 
-    public function getHook(): string
+    public function getTag(): string
     {
         return $this->resolveKeyFromClassName('Event', '_');
     }
