@@ -49,10 +49,12 @@ class RestRouteCollector
     public function setController(array $controller): RestRouteCollector
     {
         $this->routes[$this->currentKey]['callback'] = function (WP_REST_Request $request) use ($controller) {
-            $this->injector->execute(
-                $this->getControllerClassCallback($controller),
-                [':request' => $request]
-            );
+            $args = [':request' => $request];
+            foreach ($request->get_params() as $key => $value) {
+                $args[':' . $key] = $value;
+            }
+
+            $this->injector->execute($this->getControllerClassCallback($controller), $args);
         };
 
         return $this;

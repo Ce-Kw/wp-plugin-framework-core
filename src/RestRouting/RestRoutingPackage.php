@@ -4,7 +4,7 @@ namespace CEKW\WpPluginFramework\Core\RestRoute;
 
 use CEKW\WpPluginFramework\Core\Package\AbstractPackage;
 
-class RestRoute extends AbstractPackage
+class RestRoutingPackage extends AbstractPackage
 {
     private RestRouteCollector $restRouteCollector;
 
