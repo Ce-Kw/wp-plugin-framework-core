@@ -4,6 +4,7 @@ namespace CEKW\WpPluginFramework\Core\Module;
 
 use Auryn\Injector;
 use CEKW\WpPluginFramework\Core\ContentType\PostType;
+use CEKW\WpPluginFramework\Core\Event\EventInterface;
 use CEKW\WpPluginFramework\Core\Shortcode\AbstractShortcode;
 use WP_Widget;
 
@@ -39,6 +40,11 @@ abstract class AbstractModule implements ModuleInterface
         }, $priority, $acceptedArgs);
     }
 
+    public function addEvent(EventInterface $event): void
+    {
+        add_action($event->getTag(), $event);
+    }
+
     public function addFilter(string $tag, callable $callback, int $priority = 10, int $acceptedArgs = 1): void
     {
         add_filter($tag, function () use ($callback) {
@@ -56,6 +62,11 @@ abstract class AbstractModule implements ModuleInterface
         $this->postTypes[] = $postType;
 
         return $this;
+    }
+
+    public function addSettings(array $settings): void
+    {
+
     }
 
     public function getPostTypes(): array
