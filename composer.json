@@ -37,5 +37,10 @@
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
         "phpunit/phpunit": "^9",
         "mockery/mockery": "^1.4"
-    }
+    },
+    "suggest": {
+      "cekw/wp-plugin-framework-assets": "Asset management package",
+      "cekw/wp-plugin-framework-routing": "Routing package",
+      "tareq1988/wp-eloquent": "ORM"
+  }
 }
