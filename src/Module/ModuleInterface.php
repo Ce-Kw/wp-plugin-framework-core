@@ -2,14 +2,14 @@
 
 namespace CEKW\WpPluginFramework\Core\Module;
 
-use Auryn\Injector;
 use CEKW\WpPluginFramework\Core\ContentType\PostType;
 use CEKW\WpPluginFramework\Core\ShortcodeInterface;
 use WP_Widget;
 
 interface ModuleInterface
 {
-    public function init();
+    public function getActions(): array;
+    public function getFilters(): array;
 
     /**
      * @return PostType[]
@@ -21,9 +21,10 @@ interface ModuleInterface
      */
     public function getShortcodes(): array;
 
+    public function init();
+
      /**
      * @return WP_Widget[]
      */
     public function getWidgets(): array;
-    public function setInjector(Injector $injector): void;
 }

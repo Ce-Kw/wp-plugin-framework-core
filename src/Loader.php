@@ -66,7 +66,6 @@ final class Loader
                 continue;
             }
 
-            $instance->setInjector($this->injector);
             $instance->init();
 
             if (is_admin() && method_exists($instance, 'admin')) {
@@ -91,6 +90,7 @@ final class Loader
         $this->injector->share($GLOBALS['wpdb']);
 
         $hookCollector = new HookCollector($this->modules, $this->injector);
+        $hookCollector->addHooks();
 
         register_activation_hook($this->file, [$hookCollector, 'activation']);
         register_deactivation_hook($this->file, [$hookCollector, 'deactivation']);

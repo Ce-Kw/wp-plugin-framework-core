@@ -2,7 +2,6 @@
 
 namespace CEKW\WpPluginFramework\Core\Module;
 
-use Auryn\Injector;
 use CEKW\WpPluginFramework\Core\ContentType\PostType;
 use CEKW\WpPluginFramework\Core\Event\EventInterface;
 use CEKW\WpPluginFramework\Core\Shortcode\AbstractShortcode;
@@ -10,7 +9,9 @@ use WP_Widget;
 
 abstract class AbstractModule implements ModuleInterface
 {
-    private ?Injector $injector = null;
+    private array $actions = [];
+    private array $filters = [];
+
     /**
      * @var PostType[]
      */
@@ -30,31 +31,22 @@ abstract class AbstractModule implements ModuleInterface
 
     public function addAction(string $tag, callable $callback, int $priority = 10, int $acceptedArgs = 1): void
     {
-        add_action($tag, function () use ($callback) {
-            $args = [];
-            foreach (func_get_args() as $key => $value) {
-                $args[':' . $key] = $value;
-            }
-
-            $this->injector->execute($callback, $args);
-        }, $priority, $acceptedArgs);
+        $this->actions[] = compact('tag', 'callback', 'priority', 'acceptedArgs');
     }
 
     public function addEvent(EventInterface $event): void
     {
-        add_action($event->getTag(), $event);
+        $this->actions[] = [
+            'tag' => $event->getTag(),
+            'callback' => $event,
+            'priority' => 10,
+            'acceptedArgs' => 1,
+        ];
     }
 
     public function addFilter(string $tag, callable $callback, int $priority = 10, int $acceptedArgs = 1): void
     {
-        add_filter($tag, function () use ($callback) {
-            $args = [];
-            foreach (func_get_args() as $key => $value) {
-                $args[':' . $key] = $value;
-            }
-
-            $this->injector->execute($callback, $args);
-        }, $priority, $acceptedArgs);
+        $this->filters[] = compact('tag', 'callback', 'priority', 'acceptedArgs');
     }
 
     public function addPostType(PostType $postType): AbstractModule
@@ -92,10 +84,5 @@ abstract class AbstractModule implements ModuleInterface
     public function getWidgets(): array
     {
         return $this->widgets;
-    }
-
-    public function setInjector(Injector $injector): void
-    {
-        $this->injector = $injector;
     }
 }
