@@ -1,6 +1,6 @@
 <?php
 
-namespace CEKW\WpPluginFramework\Core\RestRoute;
+namespace CEKW\WpPluginFramework\Core\RestRouting;
 
 use CEKW\WpPluginFramework\Core\Package\AbstractPackage;
 

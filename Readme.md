@@ -37,7 +37,7 @@ $frameworkLoader
 Include additonal classes to extend the framework.
 Optional Package included in the core library:  
 
-* \CEKW\WpPluginFramework\Core\RestRoute\RestRoute
+* \CEKW\WpPluginFramework\Core\RestRouting\RestRoutingPackage
 
 External Packages:
 
