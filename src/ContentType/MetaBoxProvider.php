@@ -6,7 +6,7 @@ class MetaBoxProvider
 {
     private array $metaBoxes = [];
 
-    public function _addMetaBox(MetaBox $metaBox):MetaBoxProvider
+    public function _addMetaBox(MetaBox $metaBox): MetaBoxProvider
     {
         $this->metaBoxes[] = $metaBox;
 

@@ -188,6 +188,8 @@ class LabelInfo
             'search_items' => $this->getLabelSearchItems(),
             'not_found' => $this->getLabelNotFound(),
             'not_found_in_trash' => $this->getLabelNotFoundInTrash()
-        ],function($value){return $value!=='';});
+        ], function ($value) {
+            return $value !== '';
+        });
     }
 }

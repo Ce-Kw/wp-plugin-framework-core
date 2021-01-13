@@ -26,8 +26,10 @@ abstract class AbstractExtenderBridge
         }
 
         $result = [];
-        foreach ($funcResults as $key=>$value){
-            if($value===null){continue;}
+        foreach ($funcResults as $key => $value) {
+            if ($value === null) {
+                continue;
+            }
             $result[] = $value;
         }
 

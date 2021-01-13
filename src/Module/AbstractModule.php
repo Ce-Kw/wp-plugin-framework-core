@@ -58,7 +58,6 @@ abstract class AbstractModule implements ModuleInterface
 
     public function addSettings(array $settings): void
     {
-
     }
 
     public function getPostTypes(): array

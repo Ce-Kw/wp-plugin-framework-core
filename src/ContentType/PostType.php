@@ -40,149 +40,165 @@ use WP_REST_Posts_Controller;
  * @method LabelInfo setLabelNotFoundInTrash
  * @method MetaBox[] getMetaBoxes
  */
-abstract class PostType extends ContentType {
+abstract class PostType extends ContentType
+{
 
-	private ?bool $excludeFromSearch    = null;
-	private ?bool $showInAdminBar       = null;
-	private ?int $menuPosition          = null;
-	private string $menuIcon            = '';
-	private string $capabilityType      = 'post';
-	private array $capabilities         = array();
-	private bool $mapMetaCap            = false;
-	private array $supports = array( 'title', 'editor' );
-	private bool $hasArchive            = false;
-	private array $rewrite              = array();
+    private ?bool $excludeFromSearch    = null;
+    private ?bool $showInAdminBar       = null;
+    private ?int $menuPosition          = null;
+    private string $menuIcon            = '';
+    private string $capabilityType      = 'post';
+    private array $capabilities         = array();
+    private bool $mapMetaCap            = false;
+    private array $supports = array( 'title', 'editor' );
+    private bool $hasArchive            = false;
+    private array $rewrite              = array();
 
-	/**
-	 * @var Taxonomy[]
-	 */
-	private array $taxonomies = array();
+    /**
+     * @var Taxonomy[]
+     */
+    private array $taxonomies = array();
 
-    public function getKey(): string {
-        return $this->resolveKeyFromClassName( 'PostType' );
+    public function getKey(): string
+    {
+        return $this->resolveKeyFromClassName('PostType');
     }
 
-	public function addTaxonomy( Taxonomy $taxonomy ): void {
-		$this->taxonomies[] = $taxonomy;
-	}
+    public function addTaxonomy(Taxonomy $taxonomy): void
+    {
+        $this->taxonomies[] = $taxonomy;
+    }
 
-	public function getTaxonomies(): array {
-		return $this->taxonomies;
-	}
+    public function getTaxonomies(): array
+    {
+        return $this->taxonomies;
+    }
 
-	public function addMeta(string $key, string $type = 'string', array $args = [])
-	{
-		$args = array_merge([
-			'show_in_rest' => true,
-			'single' => true,
-			'type' => $type,
-		], $args);
+    public function addMeta(string $key, string $type = 'string', array $args = [])
+    {
+        $args = array_merge([
+            'show_in_rest' => true,
+            'single' => true,
+            'type' => $type,
+        ], $args);
 
-		register_post_meta($this->getKey(), $key, $args);
-	}
+        register_post_meta($this->getKey(), $key, $args);
+    }
 
-	public function getArgs(): array {
-		$args = array(
-			'public'                => $this->getIsPublic(),
-			'hierarchical'          => $this->isHierarchical,
-			'exclude_from_search'   => is_null( $this->excludeFromSearch ) ? ! $this->getIsPublic() : $this->excludeFromSearch,
-			'publicly_queryable'    => is_null( $this->isPubliclyQueryable ) ? $this->getIsPublic() : $this->isPubliclyQueryable,
-			'show_ui'               => is_null( $this->showUi ) ? $this->getIsPublic() : $this->showUi,
-			'show_in_menu'          => is_null( $this->showInMenu ) ? $this->showUi : $this->showInMenu,
-			'show_in_nav_menus'     => is_null( $this->showInNavMenus ) ? $this->getIsPublic() : $this->showInNavMenus,
-			'show_in_admin_bar'     => is_null( $this->showInAdminBar ) ? $this->showInMenu : $this->showInAdminBar,
-			'show_in_rest'          => $this->showInRest,
-			'rest_base'             => empty( $this->restBase ) ? $this->getKey() : $this->restBase,
-			'rest_controller_class' => empty( $this->restControllerClass ) ? WP_REST_Posts_Controller::class : $this->restControllerClass,
-			'menu_position'         => $this->menuPosition,
-			'menu_icon'             => $this->menuIcon,
-			'supports'              => $this->getSupports(),
-			'has_archive'           => $this->hasArchive,
-			'labels'                => $this->getLabelArgs(),
-		);
+    public function getArgs(): array
+    {
+        $args = array(
+            'public'                => $this->getIsPublic(),
+            'hierarchical'          => $this->isHierarchical,
+            'exclude_from_search'   => is_null($this->excludeFromSearch) ? ! $this->getIsPublic() : $this->excludeFromSearch,
+            'publicly_queryable'    => is_null($this->isPubliclyQueryable) ? $this->getIsPublic() : $this->isPubliclyQueryable,
+            'show_ui'               => is_null($this->showUi) ? $this->getIsPublic() : $this->showUi,
+            'show_in_menu'          => is_null($this->showInMenu) ? $this->showUi : $this->showInMenu,
+            'show_in_nav_menus'     => is_null($this->showInNavMenus) ? $this->getIsPublic() : $this->showInNavMenus,
+            'show_in_admin_bar'     => is_null($this->showInAdminBar) ? $this->showInMenu : $this->showInAdminBar,
+            'show_in_rest'          => $this->showInRest,
+            'rest_base'             => empty($this->restBase) ? $this->getKey() : $this->restBase,
+            'rest_controller_class' => empty($this->restControllerClass) ? WP_REST_Posts_Controller::class : $this->restControllerClass,
+            'menu_position'         => $this->menuPosition,
+            'menu_icon'             => $this->menuIcon,
+            'supports'              => $this->getSupports(),
+            'has_archive'           => $this->hasArchive,
+            'labels'                => $this->getLabelArgs(),
+        );
 
-		if ( ! empty( $this->capabilityType ) ) {
-			$args['capability_type'] = $this->capabilityType;
-		}
+        if (! empty($this->capabilityType)) {
+            $args['capability_type'] = $this->capabilityType;
+        }
 
-		if ( ! empty( $this->mapMetaCap ) ) {
-			$args['map_meta_cap'] = $this->mapMetaCap;
-		}
+        if (! empty($this->mapMetaCap)) {
+            $args['map_meta_cap'] = $this->mapMetaCap;
+        }
 
 
-		if ( ! empty( $this->capabilities ) ) {
-			$args['capabilities'] = $this->capabilities;
-		}
+        if (! empty($this->capabilities)) {
+            $args['capabilities'] = $this->capabilities;
+        }
 
-		if ( ! empty( $this->rewrite ) ) {
-			$args['rewrite'] = $this->rewrite;
-		}
+        if (! empty($this->rewrite)) {
+            $args['rewrite'] = $this->rewrite;
+        }
 
-		return $args;
-	}
+        return $args;
+    }
 
-	public function setExcludeFromSearch( bool $excludeFromSearch ): PostType {
-		$this->excludeFromSearch = $excludeFromSearch;
+    public function setExcludeFromSearch(bool $excludeFromSearch): PostType
+    {
+        $this->excludeFromSearch = $excludeFromSearch;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function setShowInAdminBar( bool $showInAdminBar ): PostType {
-		$this->showInAdminBar = $showInAdminBar;
+    public function setShowInAdminBar(bool $showInAdminBar): PostType
+    {
+        $this->showInAdminBar = $showInAdminBar;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function setMenuPosition( int $menuPosition ): PostType {
-		$this->menuPosition = $menuPosition;
+    public function setMenuPosition(int $menuPosition): PostType
+    {
+        $this->menuPosition = $menuPosition;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function setMenuIcon( string $menuIcon ): PostType {
-		$this->menuIcon = $menuIcon;
+    public function setMenuIcon(string $menuIcon): PostType
+    {
+        $this->menuIcon = $menuIcon;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * @param string|array $capabilityType
-	 */
-	public function setCapabilityType( $capabilityType ): PostType {
-		$this->capabilityType = $capabilityType;
+    /**
+     * @param string|array $capabilityType
+     */
+    public function setCapabilityType($capabilityType): PostType
+    {
+        $this->capabilityType = $capabilityType;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function setCapabilities( array $capabilities ): PostType {
-		$this->capabilities = $capabilities;
+    public function setCapabilities(array $capabilities): PostType
+    {
+        $this->capabilities = $capabilities;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function setMapMetaCap( bool $mapMetaCap ): PostType {
-		$this->mapMetaCap = $mapMetaCap;
+    public function setMapMetaCap(bool $mapMetaCap): PostType
+    {
+        $this->mapMetaCap = $mapMetaCap;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function setHasArchive( bool $hasArchive ): PostType {
-		$this->hasArchive = $hasArchive;
+    public function setHasArchive(bool $hasArchive): PostType
+    {
+        $this->hasArchive = $hasArchive;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function setRewrite( array $rewrite ): PostType {
-		$this->rewrite = $rewrite;
+    public function setRewrite(array $rewrite): PostType
+    {
+        $this->rewrite = $rewrite;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function addSupports(string $support):ContentType {
+    public function addSupports(string $support): ContentType
+    {
         $this->supports[] = $support;
         return $this;
     }
-    public function getSupports():array {
+    public function getSupports(): array
+    {
         return $this->supports;
     }
 
