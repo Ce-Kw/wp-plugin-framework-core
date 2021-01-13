@@ -4,13 +4,13 @@ namespace CEKW\WpPluginFramework\Core\RestRoute;
 
 use CEKW\WpPluginFramework\Core\Package\AbstractPackage;
 
-class RestRoute extends AbstractPackage
+class RestRoutingPackage extends AbstractPackage
 {
     private RestRouteCollector $restRouteCollector;
 
     public function load(): void
     {
-        $this->restRouteCollector = new RestRouteCollector();
+        $this->restRouteCollector = new RestRouteCollector($this->injector);
 
         $this->loadConfig('routes/rest.php');
         do_action('cekw.wp_plugin_framework.rest_routes', $this->restRouteCollector);

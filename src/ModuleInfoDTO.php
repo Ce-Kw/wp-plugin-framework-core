@@ -1,6 +1,6 @@
 <?php
 
-namespace CEKW\WpPluginFramework\Core\DTO;
+namespace CEKW\WpPluginFramework\Core;
 
 class ModuleInfoDTO
 {

@@ -2,20 +2,15 @@
 
 namespace CEKW\WpPluginFramework\Core\Module;
 
+use Auryn\Injector;
 use CEKW\WpPluginFramework\Core\ContentType\PostType;
-use CEKW\WpPluginFramework\Core\DTO\AssetDefinitionDTO;
-use CEKW\WpPluginFramework\Core\DTO\ModuleInfoDTO;
+use CEKW\WpPluginFramework\Core\Event\EventInterface;
 use CEKW\WpPluginFramework\Core\Shortcode\AbstractShortcode;
 use WP_Widget;
 
 abstract class AbstractModule implements ModuleInterface
 {
-    private string $applicationName;
-    private array $assets = [
-        'scripts'=>['admin'=>[],'normal'=>[]],
-        'styles'=>['admin'=>[],'normal'=>[]]
-    ];
-
+    private ?Injector $injector = null;
     /**
      * @var PostType[]
      */
@@ -31,21 +26,47 @@ abstract class AbstractModule implements ModuleInterface
      */
     private array $widgets = [];
 
-    /**
-     * @var ModuleInfoDTO[]
-     */
-    private array $modulesInfos;
-
-    public function activate() {}
-
-    public function deactivate() {}
-
     abstract public function init();
+
+    public function addAction(string $tag, callable $callback, int $priority = 10, int $acceptedArgs = 1): void
+    {
+        add_action($tag, function () use ($callback) {
+            $args = [];
+            foreach (func_get_args() as $key => $value) {
+                $args[':' . $key] = $value;
+            }
+
+            $this->injector->execute($callback, $args);
+        }, $priority, $acceptedArgs);
+    }
+
+    public function addEvent(EventInterface $event): void
+    {
+        add_action($event->getTag(), $event);
+    }
+
+    public function addFilter(string $tag, callable $callback, int $priority = 10, int $acceptedArgs = 1): void
+    {
+        add_filter($tag, function () use ($callback) {
+            $args = [];
+            foreach (func_get_args() as $key => $value) {
+                $args[':' . $key] = $value;
+            }
+
+            $this->injector->execute($callback, $args);
+        }, $priority, $acceptedArgs);
+    }
 
     public function addPostType(PostType $postType): AbstractModule
     {
         $this->postTypes[] = $postType;
+
         return $this;
+    }
+
+    public function addSettings(array $settings): void
+    {
+
     }
 
     public function getPostTypes(): array
@@ -73,31 +94,8 @@ abstract class AbstractModule implements ModuleInterface
         return $this->widgets;
     }
 
-    public function addScript(AssetDefinitionDTO $assetDefinitionDTO, string $enviroment='normal'):ModuleInterface {
-        $this->assets['scripts'][$enviroment][] = $assetDefinitionDTO;
-        return $this;
-    }
-
-    public function addStyle(AssetDefinitionDTO $assetDefinitionDTO, string $enviroment='normal'):ModuleInterface {
-        $this->assets['styles'][$enviroment][] = $assetDefinitionDTO;
-        return $this;
-    }
-
-    public function getScripts(string $enviroment = 'normal'): array
+    public function setInjector(Injector $injector): void
     {
-        return $this->assets['scripts'][$enviroment];
-    }
-
-    public function getStyles(string $enviroment = 'normal'): array
-    {
-        return $this->assets['styles'][$enviroment];
-    }
-
-    final public function getApplicationName():string {
-        return $this->applicationName;
-    }
-    final public function setApplicationName(string $name):ModuleInterface {
-        $this->applicationName = $name;
-        return $this;
+        $this->injector = $injector;
     }
 }
