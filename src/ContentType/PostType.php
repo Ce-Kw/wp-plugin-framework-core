@@ -77,7 +77,7 @@ abstract class PostType extends ContentType {
 			'single' => true,
 			'type' => $type,
 		], $args);
-		
+
 		register_post_meta($this->getKey(), $key, $args);
 	}
 
@@ -184,5 +184,12 @@ abstract class PostType extends ContentType {
     }
     public function getSupports():array {
         return $this->supports;
+    }
+
+    public function removeSupports(string $support): ContentType
+    {
+        unset($this->supports[$support]);
+
+        return $this;
     }
 }
