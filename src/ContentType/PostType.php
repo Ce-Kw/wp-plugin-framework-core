@@ -204,7 +204,9 @@ abstract class PostType extends ContentType
 
     public function removeSupports(string $support): ContentType
     {
-        unset($this->supports[$support]);
+        if (($key = array_search($support, $this->supports)) !== false) {
+            unset($this->supports[$key]);
+        }
 
         return $this;
     }
