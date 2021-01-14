@@ -3,6 +3,7 @@
 namespace CEKW\WpPluginFramework\Core\ContentType;
 
 use CEKW\WpPluginFramework\Core\DynamicKeyResolverTrait;
+use WP_REST_Terms_Controller;
 
 /**
  * @method array getLabelArgs

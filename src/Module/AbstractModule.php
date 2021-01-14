@@ -5,6 +5,7 @@ namespace CEKW\WpPluginFramework\Core\Module;
 use CEKW\WpPluginFramework\Core\ContentType\PostType;
 use CEKW\WpPluginFramework\Core\Event\EventInterface;
 use CEKW\WpPluginFramework\Core\Shortcode\AbstractShortcode;
+use ftp;
 use WP_Widget;
 
 abstract class AbstractModule implements ModuleInterface
@@ -44,9 +45,19 @@ abstract class AbstractModule implements ModuleInterface
         ];
     }
 
+    public function getActions(): array
+    {
+        return $this->actions;
+    }
+
     public function addFilter(string $tag, callable $callback, int $priority = 10, int $acceptedArgs = 1): void
     {
         $this->filters[] = compact('tag', 'callback', 'priority', 'acceptedArgs');
+    }
+
+    public function getFilters(): array
+    {
+        return $this->filters;
     }
 
     public function addPostType(PostType $postType): AbstractModule
@@ -56,13 +67,13 @@ abstract class AbstractModule implements ModuleInterface
         return $this;
     }
 
-    public function addSettings(array $settings): void
-    {
-    }
-
     public function getPostTypes(): array
     {
         return $this->postTypes;
+    }
+
+    public function addSettings(array $settings): void
+    {
     }
 
     public function addShortcode(AbstractShortcode $shortcode): void
