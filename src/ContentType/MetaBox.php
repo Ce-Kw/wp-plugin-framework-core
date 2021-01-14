@@ -32,17 +32,17 @@ class MetaBox
     public function getArgs(): array
     {
         $args = [
-            'id' => md5(__NAMESPACE__ . $this->getTitle()),
+            'id' => md5(__NAMESPACE__ . $this->getTitle() . $this->objectTypes),
             'fields' => $this->fields,
             'title' => $this->getTitle(),
             'object_types' => $this->objectTypes,
             'context' => $this->getShowInRest() && $this->getContext() === 'normal' ? 'side' : $this->getContext(),
             'priority' => $this->getPriority(),
-            'showNames' => $this->getShowNames()
+            'show_names' => $this->getShowNames()
         ];
 
         if (count($this->showOn) > 0) {
-            $args['showOn'] = compact('key', 'value');
+            $args['show_on'] = compact('key', 'value');
         }
 
         return $args;
