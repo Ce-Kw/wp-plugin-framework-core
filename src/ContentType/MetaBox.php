@@ -32,7 +32,7 @@ class MetaBox
     public function getArgs(): array
     {
         $args = [
-            'id' => md5(__NAMESPACE__ . $this->getTitle() . $this->objectTypes),
+            'id' => md5(__NAMESPACE__ . $this->getTitle() . implode(',', $this->objectTypes)),
             'fields' => $this->fields,
             'title' => $this->getTitle(),
             'object_types' => $this->objectTypes,
