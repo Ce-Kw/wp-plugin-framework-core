@@ -36,25 +36,11 @@ class HookCollector
     {
         foreach ($this->modules as $module) {
             foreach ($module->getActions() as $action) {
-                add_action($action['tag'], function () use ($action) {
-                    $args = [];
-                    foreach (func_get_args() as $key => $value) {
-                        $args[':' . $key] = $value;
-                    }
-
-                    $this->injector->execute($action['callback'], $args);
-                }, $action['priority'], $action['acceptedArgs']);
+                add_action($action['tag'], fn() => $this->injector->execute($action['callback'], func_get_args()), $action['priority'], $action['acceptedArgs']);
             }
 
             foreach ($module->getFilters() as $filter) {
-                add_filter($filter['tag'], function () use ($filter) {
-                    $args = [];
-                    foreach (func_get_args() as $key => $value) {
-                        $args[':' . $key] = $value;
-                    }
-
-                    return $this->injector->execute($filter['callback'], $args);
-                }, $filter['priority'], $filter['acceptedArgs']);
+                add_filter($filter['tag'], fn() => $this->injector->execute($filter['callback'], func_get_args()), $filter['priority'], $filter['acceptedArgs']);
             }
         }
     }

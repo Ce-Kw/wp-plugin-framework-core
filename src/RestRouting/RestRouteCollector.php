@@ -54,7 +54,7 @@ class RestRouteCollector
                 $args[':' . $key] = $value;
             }
 
-            $this->injector->execute($this->getControllerClassCallback($controller), $args);
+            return $this->injector->execute($this->getControllerClassCallback($controller), $args);
         };
 
         return $this;

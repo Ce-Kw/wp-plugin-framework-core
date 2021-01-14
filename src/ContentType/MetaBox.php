@@ -35,7 +35,7 @@ class MetaBox
             'id' => md5(__NAMESPACE__ . $this->getTitle()),
             'fields' => $this->fields,
             'title' => $this->getTitle(),
-            'objectTypes' => $this->objectTypes,
+            'object_types' => $this->objectTypes,
             'context' => $this->getShowInRest() && $this->getContext() === 'normal' ? 'side' : $this->getContext(),
             'priority' => $this->getPriority(),
             'showNames' => $this->getShowNames()
