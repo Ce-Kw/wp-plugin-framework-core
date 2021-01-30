@@ -43,6 +43,7 @@ use WP_REST_Posts_Controller;
 abstract class PostType extends ContentType
 {
 
+    private ?bool $useBlockEditor = true;
     private ?bool $excludeFromSearch    = null;
     private ?bool $showInAdminBar       = null;
     private ?int $menuPosition          = null;
@@ -83,6 +84,16 @@ abstract class PostType extends ContentType
         ], $args);
 
         register_post_meta($this->getKey(), $key, $args);
+    }
+
+    public function setUseBlockEditor(bool $useBlockEditor): void
+    {
+        $this->useBlockEditor = $useBlockEditor;
+    }
+
+    public function getUseBlockEditor(): bool
+    {
+        return $this->useBlockEditor;
     }
 
     public function getArgs(): array

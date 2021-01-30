@@ -104,6 +104,10 @@ class HookCollector
             foreach ($module->getPostTypes() as $postType) {
                 register_post_type($postType->getKey(), $postType->getArgs());
 
+                if ($postType->getUseBlockEditor() === false) {
+                    add_filter('use_block_editor_for_post_type', fn($useBlockEditor, $type) => $type === $postType->getKey() ? false : $useBlockEditor, 10, 2);
+                }
+
                 foreach ($postType->getTaxonomies() as $taxanomy) {
                     register_taxonomy($taxanomy->getKey(), $postType->getKey(), $taxanomy->getArgs());
                 }
