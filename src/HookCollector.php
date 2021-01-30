@@ -102,7 +102,11 @@ class HookCollector
     {
         foreach ($this->modules as $module) {
             foreach ($module->getPostTypes() as $postType) {
-                register_post_type($postType->getKey(), $postType->getArgs());
+                if ($postType->getKey() === 'post') {
+                    add_filter('register_post_type_args', fn($args, $type) => $type === 'post' ? array_merge($args, $postType->getArgs()) : $args, 10, 2);
+                } else {
+                    register_post_type($postType->getKey(), $postType->getArgs());
+                }
 
                 if ($postType->getUseBlockEditor() === false) {
                     add_filter('use_block_editor_for_post_type', fn($useBlockEditor, $type) => $type === $postType->getKey() ? false : $useBlockEditor, 10, 2);
