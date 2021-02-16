@@ -74,9 +74,16 @@ class RestRouteCollector
         return $this;
     }
 
-    public function setArgs(array $args): RestRouteCollector
+    /**
+     * @param callable|array $callback
+     */
+    public function setArgsCallback($callback): RestRouteCollector
     {
-        $this->routes[$this->currentKey]['args'] = $args;
+        if (is_array($callback)) {
+            $callback = $this->getControllerClassCallback($callback);
+        }
+
+        $this->routes[$this->currentKey]['args'] = call_user_func($callback);
 
         return $this;
     }
