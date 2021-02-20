@@ -7,6 +7,7 @@ use Exception;
 use CEKW\WpPluginFramework\Core\Event\EventInterface;
 use CEKW\WpPluginFramework\Core\Hook\HookSubscriberInterface;
 use CEKW\WpPluginFramework\Core\Shortcode\AbstractShortcode;
+use WP_Screen;
 use WP_Widget;
 
 abstract class AbstractModule implements ModuleInterface
@@ -59,6 +60,26 @@ abstract class AbstractModule implements ModuleInterface
     public function getFilters(): array
     {
         return $this->filters;
+    }
+
+    public function addHelpTab(string $screenId, string $title, string $content): void
+    {
+        $this->addAction('in_admin_header', function () use ($screenId, $title, $content) {
+            $screen = get_current_screen();
+            if (!$screen instanceof WP_Screen) {
+                return;
+            }
+
+            if ($screenId !== $screen->id) {
+                return;
+            }
+
+            $screen->add_help_tab([
+                'id' => md5($title),
+                'title' => $title,
+                'content' => $content
+            ]);
+        });
     }
 
     public function addHookSubscriber(HookSubscriberInterface $hookSubscriber)
