@@ -9,12 +9,14 @@ use CEKW\WpPluginFramework\Core\Package\PackageInterface;
 
 use const WP_CLI;
 
-final class Loader
+class Loader
 {
-    private string $basename = '';
-    private string $file = '';
-    private ?Injector $injector = null;
-    private string $prefix = '';
+    protected string $basename;
+    protected string $file;
+    protected Injector $injector;
+    protected string $prefix;
+    protected string $rootDirPath;
+    protected string $rootDirUrl;
 
     /**
      * @var ModuleInterface[] $modules
@@ -25,8 +27,6 @@ final class Loader
      * @var ModuleInfoDTO[]
      */
     private array $moduleInfos = [];
-    private string $rootDirPath = '';
-    private string $rootDirUrl = '';
 
     public function __construct(string $file)
     {
