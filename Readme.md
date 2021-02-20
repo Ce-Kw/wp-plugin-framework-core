@@ -1,23 +1,5 @@
 # wp-plugin-framework-core
 *Foundation for advanced WordPress plugin development by Christoph Ehlers & Kevin Wellmann* 
-## Developer notes
-
-### Install dependencies
-Using composer to install plugin dependencies:
-`composer install`
-
-### Test and code-coverage
-There are several scripts to helps You testing Your code or check code-style:
-
-|Scriptname|Example|Description|
-|---|---|---|
-|build:cc               | composer run build:cc                 |Generates the coverage files|
-|build:cs&#x2011;diff   | composer run build:cs&#x2011;diff     |Generates a file that contains difference between Your and a fixed version of code|
-|check:cs               | composer run check:cs                 |Check code-style|
-|fix:cs                 | composer run fix:cs                   |Fix code-style|
-|patch:cs&#x2011;diff   | composer run patch:cs&#x2011;diff     |Using generated .diff-file to fix code-style|
-|start&#x2011;server:cc | composer run start&#x2011;server:cc   |Run local webserver to display generated coverage files|
-|test                   | composer run test                     |Run unit-tests|
 
 ## Setup
 
@@ -58,7 +40,7 @@ src/
     Module2.php
 ```
 
-Additional classes like Events, PostTypes, Shortcodes or Widgtes should be put alongside the main class or in subdirectories to better group them.
+Additional classes like Events, PostTypes, Shortcodes or Widgtes should be put alongside the main class or in subdirectories to group them.
 
 ```
 src/
@@ -72,7 +54,7 @@ src/
   Module1/
     Module1.php
     PostType/
-      Module1PAnotherostType.php
+      Module1PAnotherPostType.php
       Module1PostType.php
 ```
 
@@ -81,23 +63,88 @@ src/
 At the bare minimum the class is expected to have an init method where most of the functionality is bootstapped.    
 To better seperate concerns you may add an admin method which will only be called if `is_admin()` returns `true`.
 
-The following methods are available and should be called from the init method:
+### Hooks
 
-* addPostType
-* addShortcode
-* addWidget
+The following helper methods should be called from the init method:
 
-The following methods are available and should be called from the admin method:
+```
+$this->addEvent(new FooImportEvent());
+
+$this->addPostType(new FooPostType());
+
+$this->addShortcode(new FooShortCode());
+
+$this->addWidget(new FooWidget());
+```
+
+The following helper methods should be called from the admin method:
 
 * addListTableColumn
-* addHelpTab
-* addMenuItem
 
-To add a WordPress hook that can't be added through other means use the `addHook` method which expects a class with an implementation of the `HookListenerInterface`. The class should be named after the hook in PascalCase with the suffix `Listener`.
+```
+$this->addHelpTab('edit-post', 'Help', 'Lorem Ipsum');
+```
 
+To add a simple WordPress hook callback that can't be added through other means use one of the following wrapper methods:
+
+```
+$this->addAction('foo', () => 'bar', 10, 1);
+
+$this->addFilter('foo', () => 'bar', 10, 1);
+```
+
+For a complex callback or to group related callbacks use the following helper method which expects a class which implements the `HookSubscriberInterface`.
+
+```
+$this->addHookSubscriber(new FooHookSubscriber());
+
+class FooHookSubscriber implements \CEKW\WpPluginFramework\Core\Hook\HookSubscriberInterface
+{
+    public function getSubscribedHooks(): array
+    {
+        return [
+            'foo' => ['foo'],
+            'bar' => ['bar', 10, 2]
+        ];
+    }
+
+    public function foo(): string
+    {
+        return 'foo';
+    }
+
+    public function bar($bar, $baz): string
+    {
+        if ($baz !== 'baz') {
+          return $bar;
+        }
+
+        return 'bar';
+    }
+}
+```
+
+### Activation / deactivation hooks
 
 Each module can also have its own activate and deactivate methods. Dependencies of those methods should be type-hinted and passed as parameters. The specified dependencies will be automatically injected. Usually you would want to inject `\CEKW\WpPluginFramework\Core\Event\Schedule` or the current global instance of the `wpdb` class.
 
-## Events
-
 The event class should implement the `EventInterface`. Dependencies of this class should be type-hinted and passed as parameters of the called method and will be automatically injected.
+
+## Developer notes
+
+### Install dependencies
+Using composer to install plugin dependencies:
+`composer install`
+
+### Test and code-coverage
+There are several scripts to helps You testing Your code or check code-style:
+
+|Scriptname|Example|Description|
+|---|---|---|
+|build:cc               | composer run build:cc                 |Generates the coverage files|
+|build:cs&#x2011;diff   | composer run build:cs&#x2011;diff     |Generates a file that contains difference between Your and a fixed version of code|
+|check:cs               | composer run check:cs                 |Check code-style|
+|fix:cs                 | composer run fix:cs                   |Fix code-style|
+|patch:cs&#x2011;diff   | composer run patch:cs&#x2011;diff     |Using generated .diff-file to fix code-style|
+|start&#x2011;server:cc | composer run start&#x2011;server:cc   |Run local webserver to display generated coverage files|
+|test                   | composer run test                     |Run unit-tests|
