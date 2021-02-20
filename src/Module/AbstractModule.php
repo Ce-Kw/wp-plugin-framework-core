@@ -3,9 +3,10 @@
 namespace CEKW\WpPluginFramework\Core\Module;
 
 use CEKW\WpPluginFramework\Core\ContentType\PostType;
+use Exception;
 use CEKW\WpPluginFramework\Core\Event\EventInterface;
+use CEKW\WpPluginFramework\Core\Hook\HookSubscriberInterface;
 use CEKW\WpPluginFramework\Core\Shortcode\AbstractShortcode;
-use ftp;
 use WP_Widget;
 
 abstract class AbstractModule implements ModuleInterface
@@ -58,6 +59,18 @@ abstract class AbstractModule implements ModuleInterface
     public function getFilters(): array
     {
         return $this->filters;
+    }
+
+    public function addHookSubscriber(HookSubscriberInterface $hookSubscriber)
+    {
+        foreach ($hookSubscriber->getSubscribedHooks() as $tag => $options) {
+            $callback = [$hookSubscriber, $options[0]];
+            if (!is_callable($callback)) {
+                throw new Exception("{$hookSubscriber} should implement {$options[0]} method.");
+            }
+
+            $this->addAction($tag, $callback, $options[1] ?? 10, $options[2] ?? 1);
+        }
     }
 
     public function addPostType(PostType $postType): AbstractModule

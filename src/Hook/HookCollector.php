@@ -1,6 +1,6 @@
 <?php
 
-namespace CEKW\WpPluginFramework\Core;
+namespace CEKW\WpPluginFramework\Core\Hook;
 
 use Auryn\Injector;
 

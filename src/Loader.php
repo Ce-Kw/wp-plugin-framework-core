@@ -3,6 +3,7 @@
 namespace CEKW\WpPluginFramework\Core;
 
 use Auryn\Injector;
+use CEKW\WpPluginFramework\Core\Hook\HookCollector;
 use CEKW\WpPluginFramework\Core\Module\ModuleInterface;
 use CEKW\WpPluginFramework\Core\Package\PackageInterface;
 
