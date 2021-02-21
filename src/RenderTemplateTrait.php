@@ -2,7 +2,7 @@
 
 namespace CEKW\WpPluginFramework\Core;
 
-trait TemplateAwareTrait
+trait RenderTemplateTrait
 {
     public function renderTemplate(string $templateFile, array $data = []): string
     {

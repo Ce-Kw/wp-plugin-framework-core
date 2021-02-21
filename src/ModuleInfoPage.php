@@ -4,7 +4,7 @@ namespace CEKW\WpPluginFramework\Core;
 
 class ModuleInfoPage
 {
-    use TemplateAwareTrait;
+    use RenderTemplateTrait;
 
     private const PAGE_SLUG = 'cekw-modules';
 

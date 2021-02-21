@@ -7,7 +7,7 @@ use WP_List_Table;
 
 class ModuleInfoListTable extends WP_List_Table
 {
-    use TemplateAwareTrait;
+    use RenderTemplateTrait;
 
     // phpcs:ignore
     public function column_assets(ModuleInfoDTO $item): string
