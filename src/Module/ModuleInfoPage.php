@@ -1,6 +1,8 @@
 <?php
 
-namespace CEKW\WpPluginFramework\Core;
+namespace CEKW\WpPluginFramework\Core\Module;
+
+use CEKW\WpPluginFramework\Core\RenderTemplateTrait;
 
 class ModuleInfoPage
 {
@@ -11,7 +13,7 @@ class ModuleInfoPage
     private string $moduleInfoListTableClass = '';
 
     /**
-     * @var ModuleInfoDTO[] $modulInfos
+     * @var CEKW\WpPluginFramework\Core\Module\ModuleInfoDTO[] $modulInfos
      */
     private array $moduleInfos = [];
 
@@ -40,7 +42,7 @@ class ModuleInfoPage
         $moduleInfoListTable->prepare_items();
 
         echo $this->renderTemplate(
-            dirname(__DIR__) . '/templates/module-info.php',
+            dirname(__DIR__, 2) . '/templates/module_info.php',
             compact('moduleInfoListTable')
         );
     }

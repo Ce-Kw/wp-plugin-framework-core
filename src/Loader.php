@@ -4,6 +4,9 @@ namespace CEKW\WpPluginFramework\Core;
 
 use Auryn\Injector;
 use CEKW\WpPluginFramework\Core\Hook\HookCollector;
+use CEKW\WpPluginFramework\Core\Module\ModuleInfoDTO;
+use CEKW\WpPluginFramework\Core\Module\ModuleInfoListTable;
+use CEKW\WpPluginFramework\Core\Module\ModuleInfoPage;
 use CEKW\WpPluginFramework\Core\Module\ModuleInterface;
 use CEKW\WpPluginFramework\Core\Package\PackageInterface;
 
@@ -24,7 +27,7 @@ class Loader
     private array $modules = [];
 
     /**
-     * @var ModuleInfoDTO[]
+     * @var CEKW\WpPluginFramework\Core\Module\ModuleInfoDTO[]
      */
     private array $moduleInfos = [];
 

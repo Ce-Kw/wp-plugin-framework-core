@@ -1,8 +1,8 @@
 <?php
 
-namespace CEKW\WpPluginFramework\Core;
+namespace CEKW\WpPluginFramework\Core\Module;
 
-use CEKW\WpPluginFramework\Core\ModuleInfoDTO;
+use CEKW\WpPluginFramework\Core\RenderTemplateTrait;
 use WP_List_Table;
 
 class ModuleInfoListTable extends WP_List_Table
@@ -20,7 +20,7 @@ class ModuleInfoListTable extends WP_List_Table
     }
 
     /**
-     * @param ModuleInfoDTO $item
+     * @param CEKW\WpPluginFramework\Core\Module\ModuleInfoDTO $item
      * @param string $columnName
      */
     // phpcs:ignore
@@ -39,7 +39,7 @@ class ModuleInfoListTable extends WP_List_Table
         $result = '<ul style="margin:0">';
 
         foreach ($item->postTypes as $postType) {
-            $result .= $this->renderTemplate(dirname(__DIR__) . '/templates/module-info-column.php', [
+            $result .= $this->renderTemplate(dirname(__DIR__, 2) . '/templates/module_info_column.php', [
                 'content' => ($postType->isPublic() ? '&#128083;' : '&#128374;') . $postType->getKey(),
                 'alert' => str_replace('\\', '\\\\', get_class($postType))
             ]);
@@ -81,7 +81,7 @@ class ModuleInfoListTable extends WP_List_Table
     }
 
     /**
-     * @param ModuleInfoDTO[] $modulInfos
+     * @param CEKW\WpPluginFramework\Core\Module\ModuleInfoDTO[] $modulInfos
      *
      * @return $this
      */
@@ -93,7 +93,7 @@ class ModuleInfoListTable extends WP_List_Table
     }
 
     /**
-     * @param ModuleInfoDTO $item
+     * @param CEKW\WpPluginFramework\Core\Module\ModuleInfoDTO $item
      */
     // phpcs:ignore
     public function single_row($item): void
@@ -113,7 +113,7 @@ class ModuleInfoListTable extends WP_List_Table
         $result = '<ul style="margin:0">' . $title;
 
         foreach ($assetDTOs as $dto) {
-            $result .= $this->renderTemplate(dirname(__DIR__) . '/templates/module-info-column.php', [
+            $result .= $this->renderTemplate(dirname(__DIR__, 2) . '/templates/module_info_column.php', [
                 'content' => $dto->name,
                 'alert' => $dto->source
             ]);
