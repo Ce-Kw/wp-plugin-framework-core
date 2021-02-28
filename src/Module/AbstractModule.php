@@ -2,18 +2,21 @@
 
 namespace CEKW\WpPluginFramework\Core\Module;
 
+use Auryn\Injector;
 use CEKW\WpPluginFramework\Core\ContentType\PostType;
 use Exception;
 use CEKW\WpPluginFramework\Core\Event\EventInterface;
 use CEKW\WpPluginFramework\Core\Hook\HookSubscriberInterface;
 use CEKW\WpPluginFramework\Core\Shortcode\AbstractShortcode;
-use WP_Screen;
 use WP_Widget;
 
 abstract class AbstractModule implements ModuleInterface
 {
+    use ModuleUtilsTrait;
+
     private array $actions = [];
     private array $filters = [];
+    private Injector $injector;
 
     /**
      * @var PostType[]
@@ -24,27 +27,33 @@ abstract class AbstractModule implements ModuleInterface
      * @var AbstractShortcode[]
      */
     private array $shortcodes = [];
+    private string $templateDirPath;
 
     /**
      * @var WP_Widget[]
      */
     private array $widgets = [];
 
-    abstract public function init();
-
-    public function addAction(string $tag, callable $callback, int $priority = 10, int $acceptedArgs = 1): void
+    final public function __construct(string $rootDirPath, Injector $injector)
     {
-        $this->actions[] = compact('tag', 'callback', 'priority', 'acceptedArgs');
+        $this->templateDirPath = $rootDirPath . 'templates/';
+        $this->injector = $injector;
     }
 
-    public function addEvent(EventInterface $event): void
+    abstract public function init();
+
+    public function addAction(string $tag, callable $callback, int $priority = 10, int $acceptedArgs = 1): AbstractModule
     {
-        $this->actions[] = [
-            'tag' => $event->getTag(),
-            'callback' => $event,
-            'priority' => 10,
-            'acceptedArgs' => 1,
-        ];
+        $this->actions[] = compact('tag', 'callback', 'priority', 'acceptedArgs');
+
+        return $this;
+    }
+
+    public function addEvent(EventInterface $event): AbstractModule
+    {
+        $this->addAction($event->getTag(), $event, 10, 1);
+
+        return $this;
     }
 
     public function getActions(): array
@@ -52,9 +61,11 @@ abstract class AbstractModule implements ModuleInterface
         return $this->actions;
     }
 
-    public function addFilter(string $tag, callable $callback, int $priority = 10, int $acceptedArgs = 1): void
+    public function addFilter(string $tag, callable $callback, int $priority = 10, int $acceptedArgs = 1): AbstractModule
     {
         $this->filters[] = compact('tag', 'callback', 'priority', 'acceptedArgs');
+
+        return $this;
     }
 
     public function getFilters(): array
@@ -62,27 +73,7 @@ abstract class AbstractModule implements ModuleInterface
         return $this->filters;
     }
 
-    public function addHelpTab(string $screenId, string $title, string $content): void
-    {
-        $this->addAction('in_admin_header', function () use ($screenId, $title, $content) {
-            $screen = get_current_screen();
-            if (!$screen instanceof WP_Screen) {
-                return;
-            }
-
-            if ($screenId !== $screen->id) {
-                return;
-            }
-
-            $screen->add_help_tab([
-                'id' => md5($title),
-                'title' => $title,
-                'content' => $content
-            ]);
-        });
-    }
-
-    public function addHookSubscriber(HookSubscriberInterface $hookSubscriber)
+    public function addHookSubscriber(HookSubscriberInterface $hookSubscriber): AbstractModule
     {
         foreach ($hookSubscriber->getSubscribedHooks() as $tag => $options) {
             $callback = [$hookSubscriber, $options[0]];
@@ -92,6 +83,8 @@ abstract class AbstractModule implements ModuleInterface
 
             $this->addAction($tag, $callback, $options[1] ?? 10, $options[2] ?? 1);
         }
+
+        return $this;
     }
 
     public function addPostType(PostType $postType): AbstractModule
@@ -106,13 +99,11 @@ abstract class AbstractModule implements ModuleInterface
         return $this->postTypes;
     }
 
-    public function addSettings(array $settings): void
-    {
-    }
-
-    public function addShortcode(AbstractShortcode $shortcode): void
+    public function addShortcode(AbstractShortcode $shortcode): AbstractModule
     {
         $this->shortcodes[] = $shortcode;
+
+        return $this;
     }
 
     public function getShortcodes(): array
@@ -120,9 +111,11 @@ abstract class AbstractModule implements ModuleInterface
         return $this->shortcodes;
     }
 
-    public function addWidget(WP_Widget $widget): void
+    public function addWidget(WP_Widget $widget): AbstractModule
     {
         $this->widgets[] = $widget;
+
+        return $this;
     }
 
     public function getWidgets(): array

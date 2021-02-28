@@ -68,27 +68,59 @@ To better seperate concerns you may add an admin method which will only be calle
 The following helper methods should be called from the init method:
 
 ```
-$this->addEvent(new FooImportEvent());
+$this->addEvent(new FooImportEvent);
 
-$this->addPostType(new FooPostType());
+$this->addPostType(new FooPostType);
 
-$this->addShortcode(new FooShortCode());
+$this->addShortcode(new FooShortCode);
 
-$this->addWidget(new FooWidget());
+$this->addWidget(new FooWidget);
 ```
 
 The following helper methods should be called from the admin method:
 
-* addListTableColumn
-
 ```
-$this->addHelpTab('edit-post', 'Help', 'Lorem Ipsum');
+$this->addHelpTab('edit-post', 'Help', 'admin/post-help-tab.php');
+
+// The current post ID is automatically passed to the template.
+$this->addListTableColumn('post', 'Author image', 'admin/post-author-image.php');
+
+$this->addMenuPage(new CustomMenuPage);
+
+class CustomMenuPage extends \CEKW\WpPluginFramework\Core\Admin\AbstractMenuPage
+{
+  public function __construct()
+  {
+    $this->pageTitle = 'Custom Page';
+    $this->capability = 'manage_options';
+  }
+
+  // Send a POST or GET request to the admin-post.php endpoint with the parameter action=myCustom
+  public function myCustomAction()
+  {
+
+  }
+
+  // Send a POST or GET request via JS to the admin-ajax.php endpoint with the parameter action=myCustom
+  public function myCustomAjaxAction()
+  {
+    
+  }
+
+  public function render(): void
+    {
+        echo $this->renderTemplate(
+            $this->templateDirPath . 'admin/custom-page.php',
+            []
+        );
+    }
+}
 ```
 
 To add a simple WordPress hook callback that can't be added through other means use one of the following wrapper methods:
 
 ```
-$this->addAction('foo', () => 'bar', 10, 1);
+$this->addAction('foo', () => foo_function(), 10, 1);
 
 $this->addFilter('foo', () => 'bar', 10, 1);
 ```

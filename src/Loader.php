@@ -62,7 +62,7 @@ class Loader
                 continue;
             }
 
-            $instance = new $classname();
+            $instance = new $classname($this->rootDirPath, $this->injector);
             if (!$instance instanceof ModuleInterface) {
                 continue;
             }
