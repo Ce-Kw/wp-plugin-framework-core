@@ -65,4 +65,13 @@ abstract class Taxonomy extends ContentType
 
         return $args;
     }
+
+    public function addMetaBox(MetaBox $metaBox): Taxonomy
+    {
+        $metaBox->setObjectTypes(['term']);
+        $metaBox->setTaxonomies([$this->getKey()]);
+        $this->_addMetaBox($metaBox);
+
+        return $this;
+    }
 }

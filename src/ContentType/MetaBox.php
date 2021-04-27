@@ -6,6 +6,7 @@ class MetaBox
 {
     private string $context;
     private array $objectTypes = [];
+    private array $taxonomies = [];
     private string $priority;
     private bool $showInRest = false;
     private bool $showNames = true;
@@ -43,6 +44,10 @@ class MetaBox
 
         if (count($this->showOn) > 0) {
             $args['show_on'] = compact('key', 'value');
+        }
+
+        if (!empty($this->taxonomies)) {
+            $args['taxonomies'] = $this->taxonomies;
         }
 
         return $args;
@@ -116,6 +121,13 @@ class MetaBox
     public function setObjectTypes(array $objectTypes): MetaBox
     {
         $this->objectTypes = $objectTypes;
+
+        return $this;
+    }
+
+    public function setTaxonomies(array $taxonomies): MetaBox
+    {
+        $this->taxonomies = $taxonomies;
 
         return $this;
     }

@@ -95,11 +95,4 @@ abstract class ContentType extends AbstractExtenderBridge
 
         return $this;
     }
-
-    public function addMetaBox(MetaBox $metaBox): ContentType
-    {
-        $metaBox->setObjectTypes([$this->getKey()]);
-        $this->_addMetaBox($metaBox);
-        return $this;
-    }
 }

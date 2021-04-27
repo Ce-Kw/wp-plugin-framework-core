@@ -203,7 +203,7 @@ abstract class PostType extends ContentType
         return $this;
     }
 
-    public function addSupports(string $support): ContentType
+    public function addSupports(string $support): PostType
     {
         $this->supports[] = $support;
         return $this;
@@ -213,11 +213,19 @@ abstract class PostType extends ContentType
         return $this->supports;
     }
 
-    public function removeSupports(string $support): ContentType
+    public function removeSupports(string $support): PostType
     {
         if (($key = array_search($support, $this->supports)) !== false) {
             unset($this->supports[$key]);
         }
+
+        return $this;
+    }
+
+    public function addMetaBox(MetaBox $metaBox): PostType
+    {
+        $metaBox->setObjectTypes([$this->getKey()]);
+        $this->_addMetaBox($metaBox);
 
         return $this;
     }
