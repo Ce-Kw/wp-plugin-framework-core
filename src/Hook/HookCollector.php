@@ -90,7 +90,7 @@ class HookCollector
 
                     foreach ($postType->getTaxonomies() as $taxonomy) {
                         foreach ($taxonomy->getMetaBoxes() as $metaBox) {
-                            new_cmb2_box($metaBox);
+                            new_cmb2_box($metaBox->getArgs());
                         }
                     }
                 }
