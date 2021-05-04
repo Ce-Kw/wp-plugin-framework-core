@@ -54,6 +54,8 @@ class Loader
 
     public function loadModules(string $srcDir, string $namespace): Loader
     {
+        $this->loadLanguageFiles();
+
         $modulesDirectory = $this->rootDirPath . trailingslashit($srcDir);
         foreach (scandir($modulesDirectory) as $subDirectory) {
             if (in_array($subDirectory, ['.', '..'])) {
@@ -105,7 +107,17 @@ class Loader
 
         $this->addModuleInfoPage();
         $this->loadCliCommands();
-        $this->loadLanguageFiles();
+    }
+
+    private function loadLanguageFiles(): void
+    {
+        if (!is_dir($this->rootDirPath . 'lang/')) {
+            return;
+        }
+
+        $locale = determine_locale();
+
+        load_textdomain($this->prefix, $this->rootDirPath . "lang/{$this->prefix}-{$locale}.mo");
     }
 
     private function addModuleInfoPage(): void
@@ -126,14 +138,5 @@ class Loader
         if (defined('WP_CLI') && WP_CLI && file_exists($cliCommands)) {
             include_once $cliCommands;
         }
-    }
-
-    private function loadLanguageFiles(): void
-    {
-        if (!is_dir($this->rootDirPath . 'lang/')) {
-            return;
-        }
-
-        load_plugin_textdomain($this->prefix, false, dirname($this->basename) . '/lang/');
     }
 }
