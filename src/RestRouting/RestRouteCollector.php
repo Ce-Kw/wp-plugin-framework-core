@@ -25,9 +25,9 @@ class RestRouteCollector
         $this->namespace = $namespace;
     }
 
-    public function add(string $route): RestRouteCollector
+    public function add(string $route, string $name = ''): RestRouteCollector
     {
-        $this->currentKey = md5($route);
+        $this->currentKey = md5($route . $name);
         $this->routes[$this->currentKey] = [
             'namespace' => $this->namespace,
             'route' => $route,
@@ -69,7 +69,7 @@ class RestRouteCollector
             $callback = $this->getControllerClassCallback($callback);
         }
 
-        $this->routes[$this->currentKey]['permission_callback'] = $callback;
+        $this->routes[$this->currentKey]['permissionCallback'] = $callback;
 
         return $this;
     }
